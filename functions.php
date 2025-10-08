@@ -593,7 +593,8 @@ function luxury_jewels_display_custom_filters() {
 
         echo '<section class="widget widget_custom_filter">';
         echo '<h2 class="widget-title">' . esc_html( $group['label'] ) . '</h2>';
-        echo '<ul>';
+        $taxonomy_name = 'pa_' . $group['name'];
+        echo '<div class="swatches" data-attribute_name="attribute_' . esc_attr( $group['name'] ) . '">';
 
         foreach ( $group['options'] as $option ) {
             $link_filters = $current_filters;
@@ -608,20 +609,38 @@ function luxury_jewels_display_custom_filters() {
             }
 
             // Build the URL with the correct query arguments
+            $query_type_key = 'query_type_' . $group['name'];
             if ( empty( $link_filters ) ) {
                 // If there are no filters left for this group, remove the parameter completely
-                $link = remove_query_arg( $filter_key, $shop_page_url );
+                $link = remove_query_arg( array( $filter_key, $query_type_key ), $shop_page_url );
             } else {
-                $link = add_query_arg( $filter_key, implode( ',', $link_filters ), $shop_page_url );
+                $link = add_query_arg( array(
+                    $filter_key     => implode( ',', $link_filters ),
+                    $query_type_key => 'or',
+                ), $shop_page_url );
             }
 
-            // Add an 'active' class for styling
-            $class = $is_active ? 'class="active"' : '';
+            $term = get_term_by( 'slug', $option['slug'], $taxonomy_name );
+            if ( ! $term ) {
+                continue;
+            }
+            $swatch_color = get_term_meta( $term->term_id, '_swatch_color', true );
 
-            echo '<li><a href="' . esc_url( $link ) . '" ' . $class . '>' . esc_html( $option['name'] ) . '</a></li>';
+            $class = 'swatch';
+            if ( $is_active ) {
+                $class .= ' selected';
+            }
+
+            if ( $swatch_color ) {
+                $class .= ' swatch-color';
+                echo '<a href="' . esc_url( $link ) . '" class="' . esc_attr( $class ) . '" style="background-color:' . esc_attr( $swatch_color ) . ';" title="' . esc_attr( $option['name'] ) . '"></a>';
+            } else {
+                $class .= ' swatch-label';
+                echo '<a href="' . esc_url( $link ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $option['name'] ) . '</a>';
+            }
         }
 
-        echo '</ul>';
+        echo '</div>';
         echo '</section>';
     }
 
