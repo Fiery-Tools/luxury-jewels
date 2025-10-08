@@ -22,7 +22,7 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
       $attribute_taxonomy_objects = wc_get_attribute_taxonomies();
 
       if (! empty($attribute_taxonomy_objects)) {
-        // Loop through all attribute taxonomies to build our list and add hooks
+        // Loop through all attribute taxonomies to build our list and add hooks for TERM META (swatch color)
         foreach ($attribute_taxonomy_objects as $tax) {
 
           // THIS IS THE FIX: Use the official WooCommerce function to get the full taxonomy name.
@@ -32,25 +32,41 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
           // Add the official taxonomy name to our class property for later use
           $this->attribute_taxonomies[] = $taxonomy_name;
 
-                          add_action( $taxonomy_name . '_add_form_fields', array( $this, 'add_attribute_display_type_field' ) );
-                add_action( $taxonomy_name . '_edit_form_fields', array( $this, 'edit_attribute_display_type' ), 10, 2 );
-                add_action( 'created_' . $taxonomy_name, array( $this, 'save_attribute_display_type' ) );
-                add_action( 'edited_' . $taxonomy_name, array( $this, 'save_attribute_display_type' ) );
+          // custom attribute data for swatch color and display type
+          add_action($taxonomy_name . '_add_form_fields', array($this, 'add_swatch_color_field'));
+          add_action($taxonomy_name . '_edit_form_fields', array($this, 'edit_swatch_color_field'), 10, 2);
+          add_action('created_' . $taxonomy_name, array($this, 'save_swatch_color_field'), 10, 2);
+          add_action('edited_' . $taxonomy_name, array($this, 'save_swatch_color_field'), 10, 2);
 
         }
       }
 
-
-
       // Hook to enqueue scripts on the correct admin pages
       add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
 
+      // Hooks for adding and saving the custom "Display Type" field for ATTRIBUTES themselves.
+      add_action('woocommerce_after_add_attribute_fields', array($this, 'add_attribute_display_type_field'));
+      add_action('woocommerce_after_edit_attribute_fields', array($this, 'edit_attribute_display_type_field'), 10, 1);
+      add_action('woocommerce_attribute_added', array($this, 'save_attribute_display_type_field'), 10, 2);
+      add_action('woocommerce_attribute_updated', array($this, 'save_attribute_display_type_field'), 10, 2);
+
+      // Attribute-level fields go here
+      add_action('woocommerce_after_add_attribute_fields', array($this, 'add_display_in_card_field'));
+      add_action('woocommerce_after_edit_attribute_fields', array($this, 'edit_display_in_card_field'));
+      add_action('woocommerce_attribute_added', array($this, 'save_display_in_card_field'), 10, 2);
+      add_action('woocommerce_attribute_updated', array($this, 'save_display_in_card_field'), 10, 2);
+
+      // Position field for ordering attributes
+      add_action('woocommerce_after_add_attribute_fields', array($this, 'add_position_field'));
+      add_action('woocommerce_after_edit_attribute_fields', array($this, 'edit_position_field'));
+      add_action('woocommerce_attribute_added', array($this, 'save_position_field'), 10, 2);
+      add_action('woocommerce_attribute_updated', array($this, 'save_position_field'), 10, 2);
     }
 
     /**
      * Enqueue scripts only on the correct admin pages for any product attribute.
      */
-    public function enqueue_admin_scripts($hook_suffix)
+    public function enqueue_admin_scripts()
     {
       $screen = get_current_screen();
 
@@ -90,10 +106,15 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
     /**
      * Add "Display Type" field to the "Edit Attribute" page.
      */
-    public function edit_attribute_display_type_field($attribute)
+    public function edit_attribute_display_type_field()
     {
-      $attribute_id = $attribute->attribute_id;
-      $display_type = get_option('lj_attribute_display_type_' . $attribute_id, 'swatch');
+
+      if (!isset($_GET['edit'])) {
+        return;
+      }
+      $attribute_id = absint($_GET['edit']);
+      $display_type = get_option('luxury_jewels_attribute_display_type_' . $attribute_id, 'swatch');
+
     ?>
       <tr class="form-field">
         <th scope="row" valign="top">
@@ -114,12 +135,153 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
     /**
      * Save the "Display Type" field value.
      */
-    public function save_attribute_display_type($attribute_id, $attribute)
+    public function save_attribute_display_type_field($attribute_id, $attribute)
     {
       if (isset($_POST['attribute_display_type'])) {
         $display_type = sanitize_key($_POST['attribute_display_type']);
-        update_option('lj_attribute_display_type_' . $attribute_id, $display_type);
+        update_option('luxury_jewels_attribute_display_type_' . $attribute_id, $display_type);
       }
+    }
+
+    /**
+     * Add "Swatch Color" field to the "Add Term" page for an attribute.
+     */
+    public function add_swatch_color_field()
+    {
+    ?>
+      <div class="form-field term-color-wrap">
+        <label for="term-color"><?php _e('Swatch Color', 'mytheme'); ?></label>
+        <input name="_swatch_color" value="#ffffff" class="color-picker" id="term-color" />
+        <p><?php _e('The hex code for the swatch. Leave blank if using an image.', 'mytheme'); ?></p>
+      </div>
+    <?php
+    }
+
+    /**
+     * Add "Swatch Color" field to the "Edit Term" page for an attribute.
+     */
+    public function edit_swatch_color_field($term)
+    {
+      $color = get_term_meta($term->term_id, '_swatch_color', true);
+      if (!$color) {
+        $color = '#ffffff';
+      }
+    ?>
+      <tr class="form-field term-color-wrap">
+        <th scope="row">
+          <label for="term-color"><?php _e('Swatch Color', 'mytheme'); ?></label>
+        </th>
+        <td>
+          <input name="_swatch_color" value="<?php echo esc_attr($color); ?>" class="color-picker" id="term-color" />
+          <p class="description"><?php _e('The hex code for the swatch. Leave blank if using an image.', 'mytheme'); ?></p>
+        </td>
+      </tr>
+    <?php
+    }
+
+    /**
+     * Save the "Swatch Color" field value.
+     */
+    public function save_swatch_color_field($term_id)
+    {
+      if (isset($_POST['_swatch_color']) && '' !== $_POST['_swatch_color']) {
+        update_term_meta($term_id, '_swatch_color', sanitize_hex_color($_POST['_swatch_color']));
+      }
+    }
+
+    /**
+     * Add "Position" field to the "Add Term" page for an attribute.
+     */
+    public function add_position_field()
+    {
+    ?>
+      <div class="form-field">
+        <label for="attribute_position"><?php _e('Position', 'mytheme'); ?></label>
+        <input type="number" name="_position" id="attribute_position" value="0" style="width: 100px;">
+        <p class="description"><?php _e('A number to control the display order of this attribute in filters.', 'mytheme'); ?></p>
+      </div>
+    <?php
+    }
+
+    /**
+     * Add "Position" field to the "Edit Term" page for an attribute.
+     */
+    public function edit_position_field()
+    {
+      if (!isset($_GET['edit'])) {
+        return;
+      }
+      $attribute_id = absint($_GET['edit']);
+      $position = get_option('luxury_jewels_attribute_position_' . $attribute_id, 0);
+    ?>
+      <tr class="form-field">
+        <th scope="row" valign="top">
+          <label for="attribute_position"><?php _e('Position', 'mytheme'); ?></label>
+        </th>
+        <td>
+          <input type="number" name="_position" value="<?php echo esc_attr($position); ?>" id="attribute_position" style="width: 100px;" />
+          <p class="description"><?php _e('A number to control the display order of this attribute in filters.', 'mytheme'); ?></p>
+        </td>
+      </tr>
+    <?php
+    }
+
+    /**
+     * Save the "Position" field value.
+     */
+    public function save_position_field($attribute_id)
+    {
+      if (isset($_POST['_position'])) {
+        update_option('luxury_jewels_attribute_position_' . $attribute_id, absint($_POST['_position']));
+      }
+    }
+
+    /**
+     * Add "Display in Product Card" field to the "Add Term" page.
+     */
+    public function add_display_in_card_field()
+    {
+    ?>
+      <div class="form-field">
+        <label for="attribute_display_in_card">
+          <input type="checkbox" name="_display_in_card" id="attribute_display_in_card" value="yes" />
+          <?php _e('Display in Product Card?', 'mytheme'); ?>
+        </label>
+        <p class="description"><?php _e('If checked, this attribute will be visible on the shop/archive page product cards.', 'mytheme'); ?></p>
+      </div>
+    <?php
+    }
+
+    /**
+     * Add "Display in Product Card" field to the "Edit Term" page.
+     */
+    public function edit_display_in_card_field()
+    {
+      if (!isset($_GET['edit'])) {
+        return;
+      }
+      $attribute_id = absint($_GET['edit']);
+      $display_in_card = get_option('luxury_jewels_attribute_display_in_card_' . $attribute_id, 'no');
+    ?>
+      <tr class="form-field">
+        <th scope="row" valign="top">
+          <label for="attribute_display_in_card"><?php _e('Display in Product Card', 'mytheme'); ?></label>
+        </th>
+        <td>
+          <input type="checkbox" name="_display_in_card" id="attribute_display_in_card" value="yes" <?php checked($display_in_card, 'yes'); ?> />
+          <p class="description"><?php _e('If checked, this attribute will be visible on the shop/archive page product cards.', 'mytheme'); ?></p>
+        </td>
+      </tr>
+    <?php
+    }
+
+    /**
+     * Save the "Display in Product Card" field value.
+     */
+    public function save_display_in_card_field($attribute_id)
+    {
+      $value = isset($_POST['_display_in_card']) && $_POST['_display_in_card'] === 'yes' ? 'yes' : 'no';
+      update_option('luxury_jewels_attribute_display_in_card_' . $attribute_id, $value);
     }
   }
 

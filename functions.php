@@ -287,63 +287,9 @@ function custom_display_wishlist_button() {
 
 
 
+// begin refactoring
 
-
-function mytheme_add_color_picker_to_attributes( $taxonomy ) {
-    ?>
-    <div class="form-field term-color-wrap">
-        <label for="term-color"><?php _e( 'Swatch Color', 'mytheme' ); ?></label>
-        <input name="_swatch_color" value="#ffffff" class="color-picker" id="term-color" />
-        <p><?php _e( 'The hex code for the swatch. Leave blank if using an image.', 'mytheme' ); ?></p>
-    </div>
-    <?php
-}
-
-function mytheme_edit_color_picker_for_attributes( $term, $taxonomy ) {
-    $color = get_term_meta( $term->term_id, '_swatch_color', true );
-    if ( ! $color ) {
-        $color = '#ffffff';
-    }
-    ?>
-    <tr class="form-field term-color-wrap">
-        <th scope="row">
-            <label for="term-color"><?php _e( 'Swatch Color', 'mytheme' ); ?></label>
-        </th>
-        <td>
-            <input name="_swatch_color" value="<?php echo esc_attr( $color ); ?>" class="color-picker" id="term-color" />
-            <p class="description"><?php _e( 'The hex code for the swatch. Leave blank if using an image.', 'mytheme' ); ?></p>
-        </td>
-    </tr>
-    <?php
-}
-
-function mytheme_save_attribute_color( $term_id, $tt_id, $taxonomy ) {
-    if ( isset( $_POST['_swatch_color'] ) && '' !== $_POST['_swatch_color'] ) {
-        update_term_meta( $term_id, '_swatch_color', sanitize_hex_color( $_POST['_swatch_color'] ) );
-    }
-}
-
-function mytheme_enqueue_color_picker( $hook_suffix ) {
-    // Only load on attribute term edit screens
-    if ( strpos( $hook_suffix, 'edit-tags.php' ) === false || strpos( $hook_suffix, 'taxonomy=pa_' ) === false ) {
-        return;
-    }
-    wp_enqueue_style( 'wp-color-picker' );
-    wp_enqueue_script( 'wp-color-picker' );
-}
-
-// Add the actions for all product attribute taxonomies
-$attribute_taxonomies = wc_get_attribute_taxonomies();
-if ( ! empty( $attribute_taxonomies ) ) {
-    foreach ( $attribute_taxonomies as $tax ) {
-        add_action( 'pa_' . $tax->attribute_name . '_add_form_fields', 'mytheme_add_color_picker_to_attributes' );
-        add_action( 'pa_' . $tax->attribute_name . '_edit_form_fields', 'mytheme_edit_color_picker_for_attributes', 10, 2 );
-    }
-}
-
-add_action( 'created_term', 'mytheme_save_attribute_color', 10, 3 );
-add_action( 'edit_term', 'mytheme_save_attribute_color', 10, 3 );
-add_action( 'admin_enqueue_scripts', 'mytheme_enqueue_color_picker' );
+// end refactoring
 
 
 
