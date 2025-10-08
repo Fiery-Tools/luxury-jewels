@@ -937,7 +937,7 @@ hr.divider {
 
 /* Hide the original dropdown */
 .hidden-select {
-    display: none !important;
+    /* display: none !important; */
 }
 
 /* Style the swatch container */

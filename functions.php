@@ -9,7 +9,8 @@
  * Load theme customizer options.
  */
 require get_template_directory() . '/includes/customizer.php';
-require get_template_directory() . '/includes/swatches.php';
+// require get_template_directory() . '/includes/swatches.php';
+require get_template_directory() . '/includes/attributes.php';
 
 // Main Theme Setup
 function luxury_jewels_setup()
@@ -254,7 +255,6 @@ function custom_jewelry_product_summary_order() {
     add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 15 );
     add_action( 'woocommerce_single_product_summary', 'luxury_jewels_divider', 17 );
     // add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
-    // add_action( 'woocommerce_single_product_summary', 'luxury_jewels_swatches', 20 );
     add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 25 );
 
     add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 30 );
@@ -263,10 +263,6 @@ function custom_jewelry_product_summary_order() {
     // 8. Social Sharing Buttons (Uncomment if your theme has them and you want to show them)
     add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_sharing', 40 );
 
-}
-
-function luxury_jewels_swatches() {
-    echo '<div>swatches go here</div>';
 }
 
 function luxury_jewels_divider() {
@@ -537,8 +533,8 @@ function luxury_jewels_get_all_product_attributes() {
 
     foreach ( $attribute_taxonomies as $tax ) {
         $taxonomy_name = wc_attribute_taxonomy_name( $tax->attribute_name ); // Formats to 'pa_metal'
-        $attribute_slug = sanitize_title($tax->attribute_name);
-        $taxonomy_name  = 'pa_' . $attribute_slug;
+        $taxonomy_name = sanitize_title($tax->attribute_name);
+
 
         // Get all terms for this attribute, but only if they're used by products
         $terms = get_terms( [
@@ -587,31 +583,33 @@ function luxury_jewels_display_custom_filters() {
     echo '<div class="custom-attribute-filters">';
 
     foreach ( $attribute_groups as $group ) {
-        // Get the currently active filters for THIS group from the URL
         $filter_key = 'filter_' . $group['name'];
         $current_filters = isset( $_GET[ $filter_key ] ) ? explode( ',', wc_clean( $_GET[ $filter_key ] ) ) : [];
 
         echo '<section class="widget widget_custom_filter">';
         echo '<h2 class="widget-title">' . esc_html( $group['label'] ) . '</h2>';
+
+        $attribute = wc_get_attribute_taxonomy_by_name( $group['name'] );
+        $display_type = 'swatch';
+        if ( $attribute ) {
+            $display_type = get_option( 'lj_attribute_display_type_' . $attribute->attribute_id, 'swatch' );
+        }
+
         $taxonomy_name = 'pa_' . $group['name'];
-        echo '<div class="swatches" data-attribute_name="attribute_' . esc_attr( $group['name'] ) . '">';
+        $options_html = '';
 
         foreach ( $group['options'] as $option ) {
             $link_filters = $current_filters;
             $is_active = in_array( $option['slug'], $link_filters );
 
             if ( $is_active ) {
-                // If the filter is already active, the link should remove it
                 $link_filters = array_diff( $link_filters, [ $option['slug'] ] );
             } else {
-                // If the filter is not active, the link should add it
                 $link_filters[] = $option['slug'];
             }
 
-            // Build the URL with the correct query arguments
             $query_type_key = 'query_type_' . $group['name'];
             if ( empty( $link_filters ) ) {
-                // If there are no filters left for this group, remove the parameter completely
                 $link = remove_query_arg( array( $filter_key, $query_type_key ), $shop_page_url );
             } else {
                 $link = add_query_arg( array(
@@ -620,27 +618,36 @@ function luxury_jewels_display_custom_filters() {
                 ), $shop_page_url );
             }
 
-            $term = get_term_by( 'slug', $option['slug'], $taxonomy_name );
-            if ( ! $term ) {
-                continue;
-            }
-            $swatch_color = get_term_meta( $term->term_id, '_swatch_color', true );
-
-            $class = 'swatch';
-            if ( $is_active ) {
-                $class .= ' selected';
-            }
-
-            if ( $swatch_color ) {
-                $class .= ' swatch-color';
-                echo '<a href="' . esc_url( $link ) . '" class="' . esc_attr( $class ) . '" style="background-color:' . esc_attr( $swatch_color ) . ';" title="' . esc_attr( $option['name'] ) . '"></a>';
+            if ( 'dropdown' === $display_type ) {
+                $class = $is_active ? 'class="active"' : '';
+                $options_html .= '<li><a href="' . esc_url( $link ) . '" ' . $class . '>' . esc_html( $option['name'] ) . '</a></li>';
             } else {
-                $class .= ' swatch-label';
-                echo '<a href="' . esc_url( $link ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $option['name'] ) . '</a>';
+                $term = get_term_by( 'slug', $option['slug'], $taxonomy_name );
+                if ( ! $term ) continue;
+
+                $swatch_color = get_term_meta( $term->term_id, '_swatch_color', true );
+                $class = 'swatch' . ($is_active ? ' selected' : '');
+
+                if ( 'swatch' === $display_type && $swatch_color ) {
+                    $class .= ' swatch-color';
+                    $options_html .= '<a href="' . esc_url( $link ) . '" class="' . esc_attr( $class ) . '" style="background-color:' . esc_attr( $swatch_color ) . ';" title="' . esc_attr( $option['name'] ) . '"></a>';
+                } else {
+                    $class .= ' swatch-label';
+                    $options_html .= '<a href="' . esc_url( $link ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $option['name'] ) . '</a>';
+                }
             }
         }
 
-        echo '</div>';
+        if ( 'dropdown' === $display_type ) {
+            echo '<ul>' . $options_html . '</ul>';
+        } else {
+            $container_class = 'swatches';
+            if ( 'button' === $display_type ) {
+                $container_class .= ' is-buttons';
+            }
+            echo '<div class="' . esc_attr( $container_class ) . '" data-attribute_name="attribute_' . esc_attr( $group['name'] ) . '">' . $options_html . '</div>';
+        }
+
         echo '</section>';
     }
 

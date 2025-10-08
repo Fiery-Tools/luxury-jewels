@@ -25,56 +25,70 @@ do_action('woocommerce_before_add_to_cart_form'); ?>
 					</div>
 					<div class="value">
 						<?php
-						// Hide the original dropdown
-						wc_dropdown_variation_attribute_options([
-							'options'   => $options,
-							'attribute' => $attribute_name,
-							'product'   => $product,
-							'class'     => 'hidden-select'
-						]);
-
-						// Get terms to display as swatches
-						$terms_to_display = [];
-
-						$attribute_slug = sanitize_title($attribute_name);
-						$taxonomy_name  = 'pa_' . $attribute_slug;
-						if(strstr($taxonomy_name, 'pa_pa')){
-							continue;
+						$attribute_object = wc_get_attribute_taxonomy( $attribute_name );
+						// Default to swatch to keep existing behavior for custom attributes that get auto-converted.
+						$display_type = 'swatch';
+						if ( $attribute_object ) {
+							$display_type = get_option( 'lj_attribute_display_type_' . $attribute_object->attribute_id, 'swatch' );
 						}
 
-						$existing_taxonomy = get_taxonomy($taxonomy_name);
-
-						if (taxonomy_exists($taxonomy_name)) {
-							$terms_to_display = get_terms([
-								'taxonomy'   => $taxonomy_name,
-								'slug'       => $options,       // Pass the entire array of slugs here
-								'hide_empty' => false,          // Important: ensures terms are found even if only used by this variation
-								'orderby'    => 'include',      // Optional: keeps the order of the $options array
+						if ( 'dropdown' === $display_type ) {
+							wc_dropdown_variation_attribute_options( [
+								'options'   => $options,
+								'attribute' => $attribute_name,
+								'product'   => $product,
+							] );
+						} else {
+							// It's a swatch or button, use the swatch display logic.
+							wc_dropdown_variation_attribute_options([
+								'options'   => $options,
+								'attribute' => $attribute_name,
+								'product'   => $product,
+								'class'     => 'hidden-select'
 							]);
-						}
 
-						if (count($terms_to_display) < count($options)) {
-							// It's a custom attribute. Call our sophisticated function to handle it.
-							$terms_to_display = mytheme_handle_custom_attribute_swatches($product, $attribute_name, $options);
-						}
+							// Get terms to display as swatches
+							$terms_to_display = [];
 
-						if (! empty($terms_to_display)) {
-							echo '<div class="swatches" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute_name)) . '">';
-							foreach ($terms_to_display as $term) {
 
-								// Use our custom color field
-								$swatch_color = get_term_meta($term->term_id, '_swatch_color', true);
+							$taxonomy_name  = sanitize_title($attribute_name);
 
-								// NOTE: You can extend this to check for an image meta field first if you have one.
-								// $swatch_image_id = get_term_meta( $term->term_id, 'image_id', true );
 
-								if ($swatch_color) {
-									echo '<div class="swatch swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($swatch_color) . ';" title="' . esc_attr($term->name) . '"></div>';
-								} else {
-									echo '<div class="swatch swatch-label" data-value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</div>';
-								}
+							$existing_taxonomy = get_taxonomy($taxonomy_name);
+
+							if (taxonomy_exists($taxonomy_name)) {
+								$terms_to_display = get_terms([
+									'taxonomy'   => $taxonomy_name,
+									'slug'       => $options,       // Pass the entire array of slugs here
+									'hide_empty' => false,          // Important: ensures terms are found even if only used by this variation
+									'orderby'    => 'include',      // Optional: keeps the order of the $options array
+								]);
 							}
-							echo '</div>';
+
+							if (count($terms_to_display) < count($options)) {
+								// It's a custom attribute. Call our sophisticated function to handle it.
+								$terms_to_display = mytheme_handle_custom_attribute_swatches($product, $attribute_name, $options);
+							}
+
+							if (! empty($terms_to_display)) {
+								$container_class = 'swatches';
+								if ( 'button' === $display_type ) {
+									$container_class .= ' is-buttons';
+								}
+								echo '<div class="' . esc_attr($container_class) . '" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute_name)) . '">';
+								foreach ($terms_to_display as $term) {
+
+									// Use our custom color field
+									$swatch_color = get_term_meta($term->term_id, '_swatch_color', true);
+
+									if ('swatch' === $display_type && $swatch_color) {
+										echo '<div class="swatch swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($swatch_color) . ';" title="' . esc_attr($term->name) . '"></div>';
+									} else {
+										echo '<div class="swatch swatch-label" data-value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</div>';
+									}
+								}
+								echo '</div>';
+							}
 						}
 						?>
 					</div>
