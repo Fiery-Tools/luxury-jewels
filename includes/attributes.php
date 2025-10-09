@@ -85,6 +85,53 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
       }
     }
 
+
+    /**
+     * Add "Swatch Color" field to the "Add Term" page for an attribute.
+     */
+    public function add_swatch_color_field()
+    {
+    ?>
+      <div class="form-field term-color-wrap">
+        <label for="term-color"><?php _e('Swatch Color', 'mytheme'); ?></label>
+        <input name="_swatch_color" value="#ffffff" class="color-picker" id="term-color" />
+        <p><?php _e('The hex code for the swatch. Leave blank if using an image.', 'mytheme'); ?></p>
+      </div>
+    <?php
+    }
+
+    /**
+     * Add "Swatch Color" field to the "Edit Term" page for an attribute.
+     */
+    public function edit_swatch_color_field($term)
+    {
+      $color = get_term_meta($term->term_id, '_swatch_color', true);
+      if (!$color) {
+        $color = '#ffffff';
+      }
+    ?>
+      <tr class="form-field term-color-wrap">
+        <th scope="row">
+          <label for="term-color"><?php _e('Swatch Color', 'mytheme'); ?></label>
+        </th>
+        <td>
+          <input name="_swatch_color" value="<?php echo esc_attr($color); ?>" class="color-picker" id="term-color" />
+          <p class="description"><?php _e('The hex code for the swatch. Leave blank if using an image.', 'mytheme'); ?></p>
+        </td>
+      </tr>
+    <?php
+    }
+
+    /**
+     * Save the "Swatch Color" field value.
+     */
+    public function save_swatch_color_field($term_id)
+    {
+      if (isset($_POST['_swatch_color']) && '' !== $_POST['_swatch_color']) {
+        update_term_meta($term_id, '_swatch_color', sanitize_hex_color($_POST['_swatch_color']));
+      }
+    }
+
     /**
      * Add "Display Type" field to the "Add Attribute" page.
      */
@@ -140,52 +187,6 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
       if (isset($_POST['attribute_display_type'])) {
         $display_type = sanitize_key($_POST['attribute_display_type']);
         update_option('luxury_jewels_attribute_display_type_' . $attribute_id, $display_type);
-      }
-    }
-
-    /**
-     * Add "Swatch Color" field to the "Add Term" page for an attribute.
-     */
-    public function add_swatch_color_field()
-    {
-    ?>
-      <div class="form-field term-color-wrap">
-        <label for="term-color"><?php _e('Swatch Color', 'mytheme'); ?></label>
-        <input name="_swatch_color" value="#ffffff" class="color-picker" id="term-color" />
-        <p><?php _e('The hex code for the swatch. Leave blank if using an image.', 'mytheme'); ?></p>
-      </div>
-    <?php
-    }
-
-    /**
-     * Add "Swatch Color" field to the "Edit Term" page for an attribute.
-     */
-    public function edit_swatch_color_field($term)
-    {
-      $color = get_term_meta($term->term_id, '_swatch_color', true);
-      if (!$color) {
-        $color = '#ffffff';
-      }
-    ?>
-      <tr class="form-field term-color-wrap">
-        <th scope="row">
-          <label for="term-color"><?php _e('Swatch Color', 'mytheme'); ?></label>
-        </th>
-        <td>
-          <input name="_swatch_color" value="<?php echo esc_attr($color); ?>" class="color-picker" id="term-color" />
-          <p class="description"><?php _e('The hex code for the swatch. Leave blank if using an image.', 'mytheme'); ?></p>
-        </td>
-      </tr>
-    <?php
-    }
-
-    /**
-     * Save the "Swatch Color" field value.
-     */
-    public function save_swatch_color_field($term_id)
-    {
-      if (isset($_POST['_swatch_color']) && '' !== $_POST['_swatch_color']) {
-        update_term_meta($term_id, '_swatch_color', sanitize_hex_color($_POST['_swatch_color']));
       }
     }
 
@@ -294,4 +295,35 @@ function mytheme_instantiate_attribute_fields_class()
 {
   new MyTheme_Attribute_Fields();
 }
+
 add_action('init', 'mytheme_instantiate_attribute_fields_class');
+
+$luxury_jewels_taxonomies = array_map(function ($taxonomy) {
+  return [
+    "name" => $taxonomy->attribute_name,
+    "label" => $taxonomy->attribute_label,
+    "id" => $taxonomy->attribute_id,
+    "display_type" => get_option('luxury_jewels_attribute_display_type_' . $taxonomy->attribute_id),
+    "position" => get_option('luxury_jewels_attribute_position_' . $taxonomy->attribute_id),
+    "display_in_card" => get_option('luxury_jewels_attribute_display_in_card_' . $taxonomy->attribute_id),
+  ];
+}, wc_get_attribute_taxonomies());
+
+function luxury_jewels_get_taxonomy($taxonomy_name_or_label_or_id)
+{
+  global $luxury_jewels_taxonomies;
+
+  foreach ($luxury_jewels_taxonomies as $taxonomy) {
+    if (
+      $taxonomy['name'] == $taxonomy_name_or_label_or_id ||
+      $taxonomy['name'] == str_replace('pa_', '', $taxonomy_name_or_label_or_id) ||
+      $taxonomy['label'] == $taxonomy_name_or_label_or_id ||
+      $taxonomy['label'] == str_replace('pa_', '', $taxonomy_name_or_label_or_id) ||
+      $taxonomy['id'] == $taxonomy_name_or_label_or_id
+    ) {
+      return $taxonomy;
+    }
+  }
+
+  return null;
+}

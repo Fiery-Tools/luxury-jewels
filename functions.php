@@ -9,8 +9,9 @@
  * Load theme customizer options.
  */
 require get_template_directory() . '/includes/customizer.php';
-// require get_template_directory() . '/includes/swatches.php';
 require get_template_directory() . '/includes/attributes.php';
+require get_template_directory() . '/includes/enqueue.php';
+require get_template_directory() . '/includes/woocommerce-hooks.php';
 
 // Main Theme Setup
 function luxury_jewels_setup()
@@ -53,18 +54,7 @@ function luxury_jewels_setup()
 }
 add_action('after_setup_theme', 'luxury_jewels_setup');
 
-// Enqueue styles
-function luxury_jewels_scripts()
-{
-    wp_enqueue_style(
-        'luxury-jewels-fonts',
-        'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Lato:wght@400;700&display=swap',
-        [],
-        null
-    );
-    wp_enqueue_style('luxury-jewels-style', get_stylesheet_uri());
-}
-add_action('wp_enqueue_scripts', 'luxury_jewels_scripts');
+
 
 // Custom navigation that merges theme menu with user's custom links
 function luxury_jewels_custom_nav_menu()
@@ -258,7 +248,8 @@ function custom_jewelry_product_summary_order() {
     add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 25 );
 
     add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 30 );
-    add_action( 'woocommerce_single_product_summary', 'woocommerce_output_product_data_tabs', 35 );
+    // add_action( 'woocommerce_single_product_summary', 'woocommerce_output_product_data_tabs', 35 );
+    add_action( 'woocommerce_single_product_summary', 'luxury_jewels_render_custom_accordion', 35 );
 
     // 8. Social Sharing Buttons (Uncomment if your theme has them and you want to show them)
     add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_sharing', 40 );
@@ -375,25 +366,6 @@ function luxury_jewels_dynamic_attribute_filters() {
 
 
 
-
-
-// Enqueue AJAX add to cart script
-function luxury_jewels_ajax_add_to_cart_script()
-{
-    wp_enqueue_script(
-        'luxury-ajax-add-to-cart',
-        get_template_directory_uri() . '/js/stuff.js',
-        ['jquery'],
-        '1.0',
-        true
-    );
-
-    wp_localize_script('luxury-ajax-add-to-cart', 'luxury_jewels_cart_params', [
-        'ajax_url'   => admin_url('admin-ajax.php'),
-        'wc_ajax_url' => WC_AJAX::get_endpoint("%%endpoint%%"),
-    ]);
-}
-add_action('wp_enqueue_scripts', 'luxury_jewels_ajax_add_to_cart_script');
 
 
 
