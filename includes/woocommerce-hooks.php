@@ -117,6 +117,7 @@ function luxury_jewels_custom_tab_callback($key, $tab) {
     echo apply_filters('the_content', $tab['content']);
 }
 
+
 // == 5. PRODUCT VARIATION CUSTOMIZATIONS
 // =============================================================================
 
@@ -136,3 +137,107 @@ function luxury_jewels_remove_variation_description( $variation_data ) {
     return $variation_data;
 }
 add_filter( 'woocommerce_available_variation', 'luxury_jewels_remove_variation_description' );
+
+// =============================================================================
+// == 6. CUSTOM SIDEBAR FILTERS (SWATCHES & BUTTONS)
+// =============================================================================
+
+/**
+ * Customize the HTML for terms in the Layered Nav widget to display swatches or buttons.
+ *
+ * @param string   $term_html The original HTML for the term (an `<a>` tag).
+ * @param WP_Term  $term      The term object.
+ * @param string   $link      The link for the term.
+ * @param int      $count     The product count for the term.
+ * @return string  The modified HTML.
+ */
+function luxury_jewels_custom_layered_nav_term_html( $term_html, $term, $link, $count ) {
+    // Get our custom display type for this attribute's taxonomy
+    $attr_data = luxury_jewels_get_taxonomy( $term->taxonomy );
+
+    // If it's not a swatch or button type, or if data is missing, return the default HTML
+    if ( ! $attr_data || ! in_array( $attr_data['display_type'], [ 'swatch', 'button' ] ) ) {
+        return $term_html;
+    }
+
+    // Check if the current term is an active filter.
+    $is_active = false;
+    $chosen_attributes = WC()->query->get_layered_nav_chosen_attributes();
+    if ( isset( $chosen_attributes[ $term->taxonomy ] ) && in_array( $term->slug, $chosen_attributes[ $term->taxonomy ]['terms'] ) ) {
+        $is_active = true;
+    }
+
+    $class = 'lj-filter-item' . ( $is_active ? ' is-active' : '' );
+    $label = esc_html( $term->name );
+
+    // Generate custom HTML based on display type
+    if ( 'swatch' === $attr_data['display_type'] ) {
+        $color = get_term_meta( $term->term_id, '_swatch_color', true );
+        return sprintf(
+            '<a rel="nofollow" href="%s" class="%s swatch-filter" title="%s" style="background-color:%s;"><span class="screen-reader-text">%s</span></a>',
+            esc_url( $link ),
+            esc_attr( $class ),
+            esc_attr( $label ),
+            esc_attr( $color ?: '#fff' ),
+            $label
+        );
+    }
+
+    if ( 'button' === $attr_data['display_type'] ) {
+        return sprintf(
+            '<a rel="nofollow" href="%s" class="%s button-filter">%s</a>',
+            esc_url( $link ),
+            esc_attr( $class ),
+            $label
+        );
+    }
+
+    return $term_html;
+}
+add_filter( 'woocommerce_layered_nav_term_html', 'luxury_jewels_custom_layered_nav_term_html', 10, 4 );
+
+/**
+ * Add custom classes to the layered nav filter list (<ul>) for styling.
+ *
+ * @param array $list_args Arguments for the list.
+ * @return array Modified arguments.
+ */
+function luxury_jewels_layered_nav_list_args($list_args) {
+    if ( ! isset($list_args['taxonomy']) ) {
+        return $list_args;
+    }
+
+    $attr_data = luxury_jewels_get_taxonomy($list_args['taxonomy']);
+
+    if ($attr_data && in_array($attr_data['display_type'], ['swatch', 'button'])) {
+        // Prepend our custom classes to any existing classes.
+        $existing_class = $list_args['list_class'] ?? '';
+        $list_args['list_class'] = 'lj-filter-list type-' . $attr_data['display_type'] . ' ' . $existing_class;
+    }
+
+    return $list_args;
+}
+add_filter('woocommerce_layered_nav_list_args', 'luxury_jewels_layered_nav_list_args');
+
+
+/**
+ * Displays previous/next product navigation on single product pages.
+ *
+ * This function creates links to the next and previous products within the
+ * same product category, enhancing user navigation.
+ */
+function luxury_jewels_product_nav() {
+    // Get links to the previous and next products.
+    // The 'true' argument for in_same_term ensures navigation is within the same 'product_cat'.
+    $previous_link = get_previous_post_link( '%link', '<span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon feather feather-chevron-left" aria-hidden="true" focusable="false" role="presentation"><path d="m15 18-6-6 6-6"></path></svg></span> Previous', true, '', 'product_cat' );
+    $next_link     = get_next_post_link( '%link', '<span>Next</span> <span class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon feather feather-chevron-right" aria-hidden="true" focusable="false" role="presentation"><path d="m9 18 6-6-6-6"></path></svg></span>', true, '', 'product_cat' );
+
+
+    // Only display the navigation container if there's a link to show.
+    if ( $previous_link || $next_link ) {
+        echo '<nav class="product-navigation">';
+        echo $previous_link;
+        echo $next_link;
+        echo '</nav>';
+    }
+}

@@ -29,7 +29,8 @@ Theme Name:  Luxury Jewels
     /* border-light */
     --default-color-header-bg: #ffffff;
     /* white */
-    --default-color-primary-cta: var(--default-color-accent); /* Default is the same as the accent color */
+    --default-color-primary-cta: var(--default-color-accent);
+    /* Default is the same as the accent color */
     /* gold */
 
     /* --- ACTIVE "PROXY" VARIABLES --- */
@@ -179,7 +180,9 @@ table thead th {
  * 1. Remove list styles from ALL lists by default for a clean,
  *    component-based look in menus, footers, etc.
  */
-ul, ol, .wp-block-list {
+ul,
+ol,
+.wp-block-list {
     list-style-type: none !important;
     margin: 0;
     padding: 0;
@@ -199,8 +202,8 @@ li {
     max-width: 1440px;
     margin-left: auto;
     margin-right: auto;
-    padding-left: 2em;
-    padding-right: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
     width: 100%;
     box-sizing: border-box;
 }
@@ -438,40 +441,49 @@ input[type="submit"]:hover {
 /*--------------------------------------------------------------
 # 5. WooCommerce & Plugin Overrides
 --------------------------------------------------------------*/
-ul.products {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+/* =================================================================== */
+/*  Modern WooCommerce Product Grid - A Unified Solution              */
+/* =================================================================== */
+
+/* 1. THE GRID CONTAINER */
+/* This targets all product loops throughout WooCommerce. */
+.woocommerce ul.products {
+    /* Main layout engine */
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2.5em;
-}
+    gap: 1.5rem;
 
-ul.products::before,
-ul.products::after {
-    content: none !important;
-}
-
-.woocommerce ul.products li.product {
-    padding: 1.5em;
-    text-align: center;
-    background-color: #ffffff;
-    border: 1px solid var(--color-border);
-    transition: all 0.3s ease;
-    position: relative;
-    /* --- CRITICAL RESET --- */
-    width: 100% !important;
+    /* Resetting WooCommerce defaults */
     margin: 0;
-    float: none;
+    padding: 0;
+    list-style: none;
 }
 
+/* 2. INDIVIDUAL PRODUCT CARDS (Grid Items) */
+.woocommerce ul.products li.product {
+    /* Internal layout engine for vertical alignment */
+    display: flex;
+    flex-direction: column;
 
-.woocommerce ul.products li.product:hover {
-    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
-    border-color: var(--color-accent-light);
-    /* transform: translateY(-5px); */
+    /* --- CRITICAL RESETS for WooCommerce's float system --- */
+    width: auto !important;     /* Let the grid control the width */
+    float: none !important;     /* Disable the old float behavior */
+    margin: 0 !important;       /* Reset default margins */
+    clear: none !important;     /* Fixes the "empty slot" issue */
+
+    /* General styling */
+    text-align: left;
 }
 
+/* 3. PRODUCT IMAGE */
+.woocommerce ul.products li.product a img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 1em;
+}
+
+/* 4. PRODUCT CONTENT */
 .woocommerce ul.products li.product .woocommerce-loop-product__title {
     font-size: 20px;
     margin-bottom: 0.5em;
@@ -485,23 +497,26 @@ ul.products::after {
     margin-bottom: 1em;
 }
 
-.woocommerce ul.products li.product .added_to_cart {
-    display: block;
-    margin-top: 1em;
-    background: transparent !important;
-    color: var(--color-accent-dark);
-    font-weight: bold;
-    font-size: 14px;
-    padding: 0;
-    box-shadow: none;
+/* 5. ATTRIBUTES & SWATCHES */
+.woocommerce ul.products li.product .product-attributes { /* Assuming you wrapped attributes in this class */
+    margin-bottom: 1em;
 }
 
-.woocommerce ul.products li.product .added_to_cart:hover {
-    background: transparent !important;
-    transform: none;
+/* 6. THE BUTTON (Pushed to the bottom) */
+.woocommerce ul.products li.product .button {
+    margin-top: auto; /* The magic alignment fix */
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
 }
 
-.woocommerce .onsale {
+/* 7. Remove default WooCommerce pseudo-elements */
+.woocommerce ul.products::before,
+.woocommerce ul.products::after {
+    content: none !important;
+}
+
+/* .woocommerce .onsale {
     border-radius: 50%;
     height: 55px;
     width: 55px;
@@ -518,23 +533,15 @@ ul.products::after {
     left: auto;
     margin: 0;
     background-color: var(--color-accent-dark);
+} */
+
+/* This removes the old float and width rules from WooCommerce */
+.woocommerce div.product .woocommerce-product-gallery,
+.woocommerce div.product .summary {
+    width: auto !important; /* Let the grid control the width */
+    float: none !important; /* Disable the old float behavior */
+    margin: 0 !important;   /* Reset any default margins */
 }
-
-
-
-
-
-
-
-/* Override WooCommerce default width constraints */
-.woocommerce #content div.product div.images,
-.woocommerce div.product div.images,
-.woocommerce-page #content div.product div.images,
-.woocommerce-page div.product div.images {
-    float: none;
-    width: 100%;
-}
-
 
 /* Sidebar Layouts */
 .shop-sidebar-left-sidebar #primary.luxury-jewels-container,
@@ -567,6 +574,7 @@ ul.products::after {
 }
 
 .shop-sidebar-left-sidebar .shop-container #secondary {
+    padding: 0;
     grid-column: 1 / 2;
     grid-row: 1;
 }
@@ -590,7 +598,8 @@ ul.products::after {
     text-align: center;
     color: #fff;
     background-color: var(--color-secondary);
-    background-image: url('assets/images/hero-background.png'); /* This path must be correct */
+    background-image: url('assets/images/hero-background.png');
+    /* This path must be correct */
     background-size: cover;
     background-position: center;
     min-height: 80vh;
@@ -710,16 +719,22 @@ ul.products::after {
 /* Now that the parent is full-width, this rule controls the content's final size and centering */
 .single-product div.product {
     display: grid;
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: 2fr 1fr;
     gap: 2rem;
-    max-width: 1440px; /* This now works as intended */
+    max-width: 1440px;
+    /* This now works as intended */
     margin: auto;
     padding: 0;
+}
+
+.product-top {
+    margin-bottom: -2rem;
 }
 
 /* Gallery column */
 .product-gallery-column .woocommerce-product-gallery {
     opacity: 1 !important;
+    /* padding-right: 2rem; */
 }
 
 /* --- 4. PRODUCT INFORMATION (RIGHT COLUMN) --- */
@@ -727,22 +742,14 @@ ul.products::after {
     text-align: center;
 }
 
-/* Product Title */
-.summary .product_title {
-    font-family: var(--font-headings);
-    font-size: 3.5rem;
-    font-weight: 400;
-    line-height: 1.1;
-    margin: 0;
-}
-
 /* Price */
 .summary p.price {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--color-accent);
-    margin: 1rem 0 0.5rem 0;
+    margin: 0;
 }
+
 .summary p.price .woocommerce-Price-amount.amount {
     color: var(--color-accent) !important;
 }
@@ -753,6 +760,7 @@ ul.products::after {
     color: var(--color-text-subtle);
     margin-bottom: 2.5rem;
 }
+
 .summary .buy-now-pay-later a {
     color: var(--color-text-subtle);
     text-decoration: underline;
@@ -769,11 +777,13 @@ ul.products::after {
     margin-bottom: 1.5rem;
     text-align: left;
 }
+
 .variations label {
     font-weight: 700;
     margin-bottom: 0.5rem;
     display: block;
 }
+
 .variations select {
     width: 100%;
     padding: 0.75rem;
@@ -817,10 +827,12 @@ ul.products::after {
     font-size: 0.9rem;
     color: var(--color-text-subtle);
 }
-.product_meta > span {
+
+.product_meta>span {
     display: block;
     margin-bottom: 0.25rem;
 }
+
 .product_meta a {
     color: var(--color-accent-dark);
     font-weight: 700;
@@ -875,7 +887,8 @@ ul.products::after {
     letter-spacing: 2px;
     border-radius: 0;
     padding: 1em 2.5em !important;
-    line-height: 1.2; /* Ensures text is centered vertically in the button */
+    line-height: 1.2;
+    /* Ensures text is centered vertically in the button */
 }
 
 /* divider */
@@ -897,8 +910,9 @@ hr.divider {
 }
 
 /* Style the attribute containers */
-.variation-row .swatches, .variation-row .buttons {
-    display: flex;
+.variation-row .swatches,
+.variation-row .buttons {
+    display: flex !important;
     gap: 5px;
 }
 
@@ -906,55 +920,55 @@ hr.divider {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    /* Use padding to control the size instead of fixed width/height */
-    padding: 12px 24px; /* Adjust these values to get the desired size */
-
-    margin: 0 5px; /* Adds space between the buttons */
-    border: 1px solid #dcdcdc; /* Thin, light grey border */
-    border-radius: 8px; /* Slightly more rounded corners */
+    padding: 12px 24px;
+    margin: 0 5px 5px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
     cursor: pointer;
     font-family: Arial, sans-serif;
-    font-size: 18px; /* Slightly larger font to match the image */
+    font-size: 18px;
     color: #2C3E50;
     background-color: #ffffff;
-
-    /* This ensures text doesn't wrap if it's too long */
     white-space: nowrap;
-
     transition: border 0.2s ease-in-out;
 }
 
-.button-attribute.selected {
-    border: 2px solid #2C3E50; /* Thicker, dark blue border */
 
-    /* Optional: Adjust padding to prevent the button from resizing due to the thicker border */
+.button-attribute.sm {
+    padding: 6px 12px;
+    margin: 0 3px 3px;
+    border-radius: 2px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.button-attribute.selected {
+    border: 2px solid #2C3E50;
     padding: 11px 23px;
 }
 
+
 .swatch-attribute {
-    /* Adjust width and height to maintain overall size */
     width: 30px;
     height: 30px;
-    box-sizing: border-box; /* This makes sizing more predictable */
-
+    box-sizing: border-box;
     border-radius: 50%;
     cursor: pointer;
     display: inline-block;
     margin: 5px;
-
-    /* --- Key changes for the unselected state --- */
-    border: 1px solid #cccccc; /* The thin outer border */
-    padding: 2px; /* Creates the space you want */
-    background-clip: content-box; /* Restricts the background color to inside the padding */
-
+    border: 1px solid #cccccc;
+    padding: 2px;
+    background-clip: content-box;
     transition: all 0.3s ease;
 }
 
+
 /* Style for selected swatch */
 .swatch-attribute.selected {
-    padding: 0; /* Remove the padding to make the border hug the color */
-    border: 3px solid #000000; /* Thicker, solid border when selected */
+    padding: 0;
+    /* Remove the padding to make the border hug the color */
+    border: 3px solid #000000;
+    /* Thicker, solid border when selected */
 }
 
 /* Style for swatch hover */
@@ -974,20 +988,21 @@ hr.divider {
 
 
 .label {
-  display: flex;
-  align-items: center;
-  gap: 2px; /* space between label and value */
-  margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    /* space between label and value */
+    margin-bottom: 10px;
 }
 
 .label label {
-  font-weight: 600;
-  text-transform: uppercase;
-  margin: 3px 0 0 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 3px 0 0 0;
 }
 
 .selected-variation-name {
-  font-weight: 400;
+    font-weight: 400;
 }
 
 
@@ -1029,7 +1044,7 @@ hr.divider {
     font-size: 16px;
     font-weight: normal;
     color: #2C3E50;
-    padding: 20px 0;
+    padding: 10px 0;
     margin: 0 !important;
     cursor: pointer;
     display: flex;
@@ -1062,5 +1077,238 @@ hr.divider {
 }
 
 .woocommerce-variation.single_variation {
+    display: none !important;
+}
+
+
+
+
+
+/* product meta */
+.product_meta {
+    display: flex;
+    font-size: x-small;
+    margin-top: 0;
+}
+
+.sku_wrapper {
+    text-align: left;
+    flex-grow: 1;
+}
+
+
+.posted-in {
+    text-align: right;
+}
+
+/* Hide the "SKU:" text label */
+.sku_wrapper,
+.posted_in {
+    font-size: 0;
+    /* Hide the parent's text node */
+}
+
+.sku_wrapper .sku,
+.posted_in a {
+    font-size: x-small !important;
+    /* Make the actual SKU value visible again */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.product-info-column {
+    font-family: sans-serif;
+    /* A font similar to the target image */
+}
+
+/*
+Meta section (SKU and Category)
+*/
+.product_meta {
+    text-transform: uppercase;
+    /* Changes text to uppercase */
+    letter-spacing: 1px;
+    /* Adds space between letters */
+    font-size: 0.8em;
+    /* Makes the font size smaller */
+    color: #666;
+    /* Sets a lighter text color */
+    margin-bottom: 15px;
+    /* Adds space below the meta section */
+}
+
+
+/* Product Title */
+h1.product_title {
+    font-family: var(--font-headings);
+    font-size: 2.5rem;
+    font-weight: 200;
+    line-height: 1.1;
+    margin: 0 0 15px;
+    letter-spacing: -2px !important;
+
+}
+
+/*
+Price
+*/
+.price {
+    font-size: 1.5em;
+    /* Increases the font size of the price */
+    font-weight: 400;
+    color: #000;
+    /* Sets the price color to black */
+    margin-bottom: 20px;
+    /* Adds space below the price */
+}
+
+.woocommerce-tabs {
+    display: none
+}
+
+/*
+Divider Line
+*/
+hr.divider {
+    display: none;
+    /* Hides the horizontal line */
+}
+
+/*
+Variation Labels (Color and Size)
+*/
+.variations .label {
+    font-weight: bold;
+    /* Makes the labels "Color:" and "Size:" bold */
+    font-size: 1.1em;
+    /* Slightly increases the font size */
+    margin-bottom: 10px;
+    /* Adds space below the labels */
+}
+
+/*
+Selected Variation Name
+*/
+.selected-variation-name {
+    font-weight: normal;
+    /* Ensures the selected option text is not bold */
+}
+
+/*
+General Spacing for Variations
+*/
+.variations_form .variations {
+    margin-bottom: 20px;
+    /* Adds space below the variation options */
+}
+
+
+
+
+/* product navigation */
+.product-navigation {
+    display: flex;
+    gap: 10px;
+    font-size: small;
+    float: right;
+}
+
+.product-navigation a {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.product-navigation .icon svg {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.woocommerce-product-gallery {
+    position: relative;
+}
+
+.lj-gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 1em;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.lj-gallery-nav.lj-prev {
+    left: 0;
+}
+
+.lj-gallery-nav.lj-next {
+    right: 0;
+}
+
+[data-thumb]:not(:first-child) {
+  /* opacity: 0 !important; */
+}
+
+.woocommerce .widget_price_filter .ui-slider .ui-slider-handle {
+    background-color: var(--color-accent-dark);
+}
+
+.woocommerce .widget_price_filter .ui-slider .ui-slider-range {
+    background-color: var(--color-accent);
+}
+
+.woocommerce .button{
+    background-color: var(--color-accent) !important;
+}
+
+.shop-content .variation-row:not(:nth-child(1)){
+    /* background: red !important; */
+    padding-top: 1rem;
+}
+
+.selected-variation-name {
+    padding-left: 0.5rem;
+}
+
+
+.tagged_as {
     display: none !important;
 }

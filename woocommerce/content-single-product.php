@@ -16,6 +16,13 @@ if ( post_password_required() ) {
 }
 ?>
 <div id="product-<?php the_ID(); ?>" <?php wc_product_class( '', $product ); ?>>
+<div class="breadcrumbs product-top">
+    <?php woocommerce_breadcrumb(); ?>
+</div>
+
+<div class="product-nav-container product-top">
+    <?php luxury_jewels_product_nav(); ?>
+</div>
 
     <div class="product-gallery-column">
         <?php
@@ -47,9 +54,13 @@ if ( post_password_required() ) {
 	 * == SOLUTION: The hook is now placed here, inside the main product div ==
 	 * =========================================================================
 	 */
-	do_action( 'woocommerce_after_single_product_summary' );
+
 	?>
 
-</div> <!-- This closing div is for #product-<?php the_ID(); ?> -->
+
+
+</div>
+<?php do_action( 'woocommerce_after_single_product_summary' ); ?>
+<?php the_ID(); ?>
 
 <?php do_action( 'woocommerce_after_single_product' ); ?>

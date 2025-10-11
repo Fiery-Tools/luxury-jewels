@@ -1,69 +1,106 @@
 jQuery(document).ready(function($) {
-    $('.variations_form').each(function() {
-        var $form = $(this);
+    for(let el of document.querySelectorAll('.button-attribute,.swatch-attribute')){
+    el.addEventListener('click', function(e){
+      let target = e.target
+      let container = target.closest('.swatches,.buttons');
+      let value = target.getAttribute('data-value')
+      let title = target.title || target.innerText || value
+      let option = $(container).closest('.variation-row').find('select option').get().find(o => o.value === value || o.value === title)
 
-        $form.on('click', '.swatch-attribute,.button-attribute', function(e) {
-            e.preventDefault();
-            console.log('clicked target');
-            let target = e.target;
-            window.target = target
-            value = target.getAttribute('data-value')
-            let attribute_name = target.closest('[data-attribute_name]').getAttribute('data-attribute_name')
-            let select = document.querySelector(`select[data-attribute_name="${attribute_name}"]`)
-            let container = target.closest('.swatches,.buttons');
+      let select = option.closest('select')
+      select.value = option.value
+      $(select).trigger('change');
+      $(container).closest('.variation-row').find('.selected-variation-name').text(title)
 
-            let variationName = $(container).closest('.variation-row').find('select option[value="' + value + '"]').text();
+    })
+  }
 
-            $(container).closest('.variation-row').find('.selected-variation-name').text(variationName);
-            jQuery(container).find('.swatch-attribute,.button-attribute').removeClass('selected');
-            jQuery(target).addClass('selected');
+  // --- Product Gallery Slider ---
+  // This function adds/removes slider arrows based on the number of images.
+  function setupGallerySlider() {
+    console.log('setting up gallery');
+    var $gallery = $('.woocommerce-product-gallery');
+    if (!$gallery.length) {
+      return;
+    }
 
-            if(select){
-                $(select).val(value).trigger('change');
-            } else {
-                console.log('oops')
-            }
-            console.log(target);
+    $gallery.find('.lj-gallery-nav').remove();
 
+    // Use the gallery image wrappers as our slides, not FlexSlider thumbs
+    var $images = $gallery.find('.woocommerce-product-gallery__image');
 
-            // var $swatch = $(this);
+    if ($images.length > 1) {
+      $gallery.append('<button class="lj-gallery-nav lj-prev" aria-label="Previous image">&lt;</button>');
+      $gallery.append('<button class="lj-gallery-nav lj-next" aria-label="Next image">&gt;</button>');
 
-            // var attributeName = $swatchContainer.data('attribute_name');
-            // var value = e.target.getAttribute('title');
-            // console.log({attributeName, value});
+      // Set initial state for the slider: ensure full width and show only the first image.
+      $images.css('width', '100%').not(':first').hide();
+      $images.first().show();
+    }
+  }
 
-            // // Set the value in the hidden dropdown
-            // $form.find('select[name="' + attributeName + '"]').val(value).trigger('change');
+  $('.woocommerce-product-gallery__wrapper').height($('.woocommerce-product-gallery__wrapper *').height() + 'px')
 
-            // // Update selected class and variation name display
-            // $swatchContainer.find('.swatch').removeClass('selected');
-            // $swatch.addClass('selected');
+  $('body').on('click', '.lj-gallery-nav', function() {
+    console.log('body click');
+    var $button = $(this);
+    var $gallery = $button.closest('.woocommerce-product-gallery');
+    var $images = $gallery.find('.woocommerce-product-gallery__image');
 
-            // var variationName = $swatch.closest('.variation-row').find('select[name="' + attributeName + '"] option:selected').text();
-            // $swatch.closest('.variation-row').find('.selected-variation-name').text(variationName);
-            // console.log({variationName});
-        });
+    // If there's nothing to slide, do nothing.
+    if ($images.length <= 1) {
+      return;
+    }
 
-        // Update swatch selection when variation is found
-        // $form.on('found_variation', function(event, variation) {
-        //     for (var attribute in variation.attributes) {
-        //         var value = variation.attributes[attribute];
-        //         var $swatchContainer = $form.find('.swatches[data-attribute_name="' + attribute + '"],.buttons[data-attribute_name="' + attribute + '"]');
-        //         console.log({variation, attribute, value})
-        //         if (value) {
-        //             $swatchContainer.find('.swatch-attribute[data-value="' + value + '"],.button-attribute[data-value="' + value + '"]').addClass('selected');
-        //             var variationName = $swatchContainer.closest('.variation-row').find('select option[value="' + value + '"]').text();
-        //             $swatchContainer.closest('.variation-row').find('.selected-variation-name').text(variationName);
-        //         }
-        //     }
-        // });
+    // Find the currently visible image to determine the index.
+    var $currentImage = $images.filter(':visible');
+    if (!$currentImage.length) {
+      // If nothing is visible (e.g., during a transition), default to the first image.
+      $currentImage = $images.first();
+    }
+    var currentIndex = $images.index($currentImage);
 
-        // Clear selection display on reset
-        $form.on('reset_data', function() {
-            $(this).find('.swatch').removeClass('selected');
-            $(this).find('.selected-variation-name').text('');
-        });
-    });
+    // Calculate the next index.
+    if ($button.hasClass('lj-next')) {
+      currentIndex = (currentIndex + 1) % $images.length;
+    } else { // Previous button.
+      currentIndex = (currentIndex - 1 + $images.length) % $images.length;
+    }
+
+    // Hide the current image and show the new one with a fade effect.
+    $currentImage.stop().fadeOut(1000);
+
+    // Get the next image container and the image inside it.
+    var $nextImageContainer = $images.eq(currentIndex);
+    var $nextImage = $nextImageContainer.find('img');
+
+    // Get the URL for the large image from the data attribute.
+    var largeImageUrl = $nextImage.data('large_image') || $nextImage.data('src');
+    console.log({largeImageUrl}, $nextImage.attr('src'))
+
+    // If the image src is not already the large version, update it.
+    if (largeImageUrl && $nextImage.attr('src') !== largeImageUrl) {
+      // To ensure the large image is displayed, we update the src
+      // and remove the srcset which might contain smaller images.
+      $nextImage.attr('src', largeImageUrl);
+    //   $nextImage.attr('opacity', "100");
+      $nextImage.attr('srcset', ''); // Clear srcset
+    }
+    $nextImageContainer.stop().fadeIn(0);
+  });
+
+  // Set up the slider on initial page load.
+  setupGallerySlider();
+
+  // Re-run setup after variation changes, as WooCommerce replaces the gallery markup.
+  $('.variations_form').on('found_variation', function() {
+    setTimeout(setupGallerySlider, 100); // A small delay is needed for the DOM to update.
+  });
+
+  $('.reset_variations').on('click', function() {
+    setTimeout(setupGallerySlider, 100);
+  });
+
 });
 
 
@@ -89,7 +126,9 @@ jQuery(document).ready(function($) {
     // --- FINAL & Conflict-Free Accordion Logic ---
 
     // 1. Find the very first accordion item and its content.
-    var $firstItem = $('.luxury-jewels-tabs .lj-accordion-item:first');
+    var keepOpen = $('.keep-open')[0];
+
+    var $firstItem = keepOpen ? $('.luxury-jewels-tabs .lj-accordion-item.is-active') :  $('.luxury-jewels-tabs .lj-accordion-item:first');
     var $firstItemContent = $firstItem.find('.lj-accordion-content');
 
     // 2. Mark the first item as active and show its content by default.
@@ -102,6 +141,9 @@ jQuery(document).ready(function($) {
         var $clickedItem = $(this).closest('.lj-accordion-item');
         var $content = $clickedItem.find('.lj-accordion-content');
 
+
+        console.log({keepOpen})
+
         // Check if the clicked item is already active.
         if ($clickedItem.hasClass('is-active')) {
             // If it is, close it.
@@ -110,9 +152,13 @@ jQuery(document).ready(function($) {
         } else {
             // If it's not active:
             // First, close any other item that is currently open.
-            $('.luxury-jewels-tabs .lj-accordion-item.is-active')
+            if(!keepOpen){
+              console.log('closing')
+              $('.luxury-jewels-tabs .lj-accordion-item.is-active')
                 .removeClass('is-active')
                 .find('.lj-accordion-content').slideUp(400);
+
+            }
 
             // Then, open the one that was clicked.
             $content.slideDown(400);

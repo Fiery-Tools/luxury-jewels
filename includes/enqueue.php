@@ -47,34 +47,4 @@ function luxury_jewels_scripts()
 }
 add_action('wp_enqueue_scripts', 'luxury_jewels_scripts');
 
-add_action('wp_enqueue_scripts', function() {
-    // Remove WooCommerce's single product JS (it hides the tabs)
-    wp_dequeue_script('wc-single-product');
-    wp_deregister_script('wc-single-product');
-}, 99);
 
-add_action('wp_head', function(){
-  ?>
-  <script>
-  (function(){
-    // minimal, same idea as above
-    const origSetAttribute = Element.prototype.setAttribute;
-    Element.prototype.setAttribute = function(name, value) {
-      if (name === 'style' && this.classList && this.classList.contains('woocommerce-Tabs-panel')) {
-        console.warn('setAttribute(style) on .woocommerce-Tabs-panel', this, value);
-        console.trace();
-      }
-      return origSetAttribute.apply(this, arguments);
-    };
-    const origSetProperty = CSSStyleDeclaration.prototype.setProperty;
-    CSSStyleDeclaration.prototype.setProperty = function(name, val, prio) {
-      if (name === 'display') {
-        console.warn('style.setProperty display', val, this);
-        console.trace();
-      }
-      return origSetProperty.apply(this, arguments);
-    };
-  })();
-  </script>
-  <?php
-}, 1); // very early

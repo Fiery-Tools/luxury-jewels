@@ -33,8 +33,7 @@ $sidebar_layout = get_theme_mod( 'luxury_jewels_shop_sidebar_layout', 'sidebar-r
                  */
                 ?>
                 <aside id="secondary" class="widget-area">
-                    <?php get_sidebar( 'sidebar-shop' ); ?>
-                    ss
+                    <?php get_sidebar( 'shop' ); ?>
                 </aside><!-- #secondary -->
 
             </div><!-- .shop-container -->

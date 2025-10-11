@@ -73,93 +73,86 @@ do_action('woocommerce_before_add_to_cart_form'); ?>
 
 					<div class="value">
 						<?php
-						// $taxonomy = $taxonom
 						$attr = luxury_jewels_get_taxonomy($attribute_name);
-
-						// $attribute_object = null;
-						// foreach ($taxonomies as $tax) {
-						// 	if ($tax->attribute_name === $attribute_slug) {
-						// 		$attribute_object = $tax;
-						// 		break;
-						// 	}
-						// }
-
-						// // Default to swatch to keep existing behavior for custom attributes that get auto-converted.
-						// $display_type = 'swatch';
-						// if ($attribute_object) {
-						// 	$display_type = get_option('luxury_jewels_attribute_display_type_' . $attribute_object->attribute_id, 'swatch');
-						// }
-
-						switch ($attr["display_type"]) {
-							case "swatch":
-								wc_dropdown_variation_attribute_options([
-									'options'   => $options,
-									'attribute' => $attribute_name,
-									'product'   => $product,
-									'class'     => 'hidden-select'
-								]);
-
-								// Get terms to display as swatches
-								$terms_to_display = [];
-								if (taxonomy_exists($attribute_name)) {
-									$terms_to_display = get_terms([
-										'taxonomy'   => $attribute_name,
-										'slug'       => $options,
-										'hide_empty' => false,
-										'orderby'    => 'include',
+						if ($attr) {
+							switch ($attr["display_type"]) {
+								case "swatch":
+									wc_dropdown_variation_attribute_options([
+										'options'   => $options,
+										'attribute' => $attribute_name,
+										'product'   => $product,
+										'class'     => 'hidden-select'
 									]);
-								}
 
-								if (!empty($terms_to_display)) {
-									echo '<div class="swatches" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute_name)) . '">';
-									foreach ($terms_to_display as $term) {
-										$swatch_color = get_term_meta($term->term_id, '_swatch_color', true);
+									// Get terms to display as swatches
+									$terms_to_display = [];
+									if (taxonomy_exists($attribute_name)) {
+										$terms_to_display = get_terms([
+											'taxonomy'   => $attribute_name,
+											'slug'       => $options,
+											'hide_empty' => false,
+											'orderby'    => 'include',
+										]);
+									}
 
-										if ($swatch_color) {
-											echo '<div class="swatch-attribute swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($swatch_color) . ';" title="' . esc_attr($term->name) . '"></div>';
-										} else {
-											echo '<div class="swatch-attribute swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($term->name) . ';" title="' . esc_attr($term->name) . '"></div>';
+									if (!empty($terms_to_display)) {
+										echo '<div class="swatches" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute_name)) . '">';
+										foreach ($terms_to_display as $term) {
+											$swatch_color = get_term_meta($term->term_id, '_swatch_color', true);
 
+											if ($swatch_color) {
+												echo '<div class="swatch-attribute swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($swatch_color) . ';" title="' . esc_attr($term->name) . '"></div>';
+											} else {
+												echo '<div class="swatch-attribute swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($term->name) . ';" title="' . esc_attr($term->name) . '"></div>';
+											}
 										}
+										echo '</div>';
 									}
-									echo '</div>';
-								}
-								break;
-							case "button":
-								wc_dropdown_variation_attribute_options([
-									'options'   => $options,
-									'attribute' => $attribute_name,
-									'product'   => $product,
-									'class'     => 'hidden-select'
-								]);
-
-								// Get terms to display as buttons
-								$terms_to_display = [];
-								if (taxonomy_exists($attribute_name)) {
-									$terms_to_display = get_terms([
-										'taxonomy'   => $attribute_name,
-										'slug'       => $options,
-										'hide_empty' => false,
-										'orderby'    => 'include',
+									break;
+								case "button":
+									wc_dropdown_variation_attribute_options([
+										'options'   => $options,
+										'attribute' => $attribute_name,
+										'product'   => $product,
+										'class'     => 'hidden-select'
 									]);
-								}
 
-								if (!empty($terms_to_display)) {
-									echo '<div class="buttons is-buttons" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute_name)) . '">';
-									foreach ($terms_to_display as $term) {
-										echo '<div class="button-attribute" data-value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</div>';
+									// Get terms to display as buttons
+									$terms_to_display = [];
+									if (taxonomy_exists($attribute_name)) {
+										$terms_to_display = get_terms([
+											'taxonomy'   => $attribute_name,
+											'slug'       => $options,
+											'hide_empty' => false,
+											'orderby'    => 'include',
+										]);
 									}
-									echo '</div>';
-								}
-								break;
-							default:
-								wc_dropdown_variation_attribute_options([
-									'options'   => $options,
-									'attribute' => $attribute_name,
-									'product'   => $product,
-								]);
-								break;
+
+									if (!empty($terms_to_display)) {
+										echo '<div class="buttons is-buttons" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute_name)) . '">';
+										foreach ($terms_to_display as $term) {
+											echo '<div class="button-attribute" data-value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</div>';
+										}
+										echo '</div>';
+									}
+									break;
+								default:
+									wc_dropdown_variation_attribute_options([
+										'options'   => $options,
+										'attribute' => $attribute_name,
+										'product'   => $product,
+									]);
+									break;
+							}
+						} else {
+							wc_dropdown_variation_attribute_options([
+								'options'   => $options,
+								'attribute' => $attribute_name,
+								'product'   => $product,
+							]);
 						}
+
+
 						?>
 					</div>
 				</div>

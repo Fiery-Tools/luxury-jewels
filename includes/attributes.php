@@ -309,6 +309,14 @@ $luxury_jewels_taxonomies = array_map(function ($taxonomy) {
   ];
 }, wc_get_attribute_taxonomies());
 
+// Sort the global taxonomies array by the custom 'position' field.
+// This ensures that filters in the sidebar appear in the desired order.
+usort($luxury_jewels_taxonomies, function ($a, $b) {
+    $pos_a = isset($a['position']) ? (int) $a['position'] : 0;
+    $pos_b = isset($b['position']) ? (int) $b['position'] : 0;
+    return $pos_a <=> $pos_b;
+});
+
 function luxury_jewels_get_taxonomy($taxonomy_name_or_label_or_id)
 {
   global $luxury_jewels_taxonomies;
