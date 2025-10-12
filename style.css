@@ -1312,3 +1312,43 @@ General Spacing for Variations
 .tagged_as {
     display: none !important;
 }
+
+.woocommerce-product-gallery__wrapper{
+    overflow: hidden;
+    /* border: solid red 2px; */
+}
+
+.woocommerce-result-count{
+    display: none;
+}
+
+select[name="orderby"] {
+    background-color: transparent;
+    padding: 0.5rem 1rem;
+    border: 0;
+}
+
+.woocommerce .woocommerce-ordering {
+    margin: 0;
+}
+
+.shop-content .page-title {
+    text-align: center;
+    font-size: 48px;
+    margin: 0;
+    padding: 0;
+    line-height: 42px;
+}
+
+.shop-content .term-description{
+    text-align: center;
+}
+
+.wc-block-cart-item__remove-link {
+    color: var(--color-accent) !important;
+}
+
+/* hide for now */
+.footer-widgets {
+    display: none
+}

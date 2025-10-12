@@ -29,7 +29,6 @@ cp -r \
   includes \
   woocommerce \
   js \
-  assets \
   footer.php \
   front-page.php \
   functions.php \
@@ -38,6 +37,7 @@ cp -r \
   page.php \
   sidebar-shop.php* \
   woocommerce.php \
+  style.css \
   $RELEASE_DIR/
 
 # 6. Navigate into the release directory to create the zip
@@ -54,3 +54,5 @@ echo "🧹 Cleaning up temporary release directory..."
 rm -rf $RELEASE_DIR
 
 echo "✅ Success! Plugin packaged successfully: $ZIP_FILE"
+
+mv luxury-jewels.zip ~/Downloads

@@ -12,6 +12,10 @@ jQuery(document).ready(function($) {
       $(select).trigger('change');
       $(container).closest('.variation-row').find('.selected-variation-name').text(title)
 
+      $(target).parent().find('.button-attribute,.swatch-attribute').removeClass('selected')
+
+      $(target).addClass('selected')
+
     })
   }
 
@@ -40,6 +44,12 @@ jQuery(document).ready(function($) {
   }
 
   $('.woocommerce-product-gallery__wrapper').height($('.woocommerce-product-gallery__wrapper *').height() + 'px')
+
+  const galleryImages = $('.woocommerce-product-gallery .woocommerce-product-gallery__image img').get().map(img => {
+    return $(img).data('large_image') || $(img).data('src');
+  })
+
+  console.log({galleryImages})
 
   $('body').on('click', '.lj-gallery-nav', function() {
     console.log('body click');

@@ -11,6 +11,7 @@
 require get_template_directory() . '/includes/customizer.php';
 require get_template_directory() . '/includes/attributes.php';
 require get_template_directory() . '/includes/enqueue.php';
+require get_template_directory() . '/includes/banner.php';
 require get_template_directory() . '/includes/woocommerce-hooks.php';
 
 // Main Theme Setup
