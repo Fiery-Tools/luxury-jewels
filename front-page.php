@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template for the homepage
  *
@@ -29,19 +30,31 @@ get_header();
                 'hide_empty' => true,
                 'number'     => 3,
             );
-            $product_categories = get_terms( $args );
-            if ( ! empty( $product_categories ) && ! is_wp_error( $product_categories ) ) {
-                foreach ( $product_categories as $category ) {
-                    $thumbnail_id = get_term_meta( $category->term_id, 'thumbnail_id', true );
-                    $image_url    = wp_get_attachment_url( $thumbnail_id );
-                    echo '<div class="collection-item">';
-                    echo '<a href="' . esc_url( get_term_link( $category ) ) . '">';
-                    if ( $image_url ) {
-                        echo '<img src="' . esc_url( $image_url ) . '" alt="' . esc_attr( $category->name ) . '">';
+            $product_categories = get_terms($args);
+
+            $default_images = [
+                'assets/images/celestial.jpg',
+                'assets/images/ethereal.jpg',
+                'assets/images/opulence.jpg',
+            ];
+
+            $i = 0;
+            if (! empty($product_categories) && ! is_wp_error($product_categories)) {
+                foreach ($product_categories as $category) {
+                    $thumbnail_id = get_term_meta($category->term_id, 'thumbnail_id', true);
+                    $image_url    = wp_get_attachment_url($thumbnail_id);
+                    if ( ! $image_url && isset( $default_images[ $i ] ) ) {
+                        $image_url = get_template_directory_uri() . '/' . $default_images[ $i ];
                     }
-                    echo '<h3>' . esc_html( $category->name ) . '</h3>';
+                    echo '<div class="collection-item">';
+                    echo '<a href="' . esc_url(get_term_link($category)) . '">';
+                    if ($image_url) {
+                        echo '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($category->name) . '">';
+                    }
+                    echo '<h3>' . esc_html($category->name) . '</h3>';
                     echo '</a>';
                     echo '</div>';
+                    $i += 1;
                 }
             }
             ?>

@@ -20,11 +20,6 @@ function luxury_jewels_customize_register($wp_customize)
   ]);
 
 
-
-
-
-
-
   // --- Header Options Section (NEW) ---
   $wp_customize->add_section('luxury_jewels_header_section', [
     'title' => __('Header & Navigation', 'luxury-jewels'),
@@ -319,6 +314,32 @@ function luxury_jewels_customize_register($wp_customize)
       'type'        => 'textarea',
     ));
   }
+
+  // --- Swatch Information Section ---
+  $wp_customize->add_section('luxury_jewels_swatch_info_section', [
+    'title'       => __('Attribute Display Types', 'luxury-jewels'),
+    'priority'    => 30, // After Shop & Product Pages section
+    'panel'       => 'luxury_jewels_options_panel',
+  ]);
+
+  // Create a dummy setting for the info control
+  $wp_customize->add_setting('luxury_jewels_swatch_info_setting', ['sanitize_callback' => 'esc_html']);
+
+  // Add the control with the descriptive text and link
+  $wp_customize->add_control(new WP_Customize_Control(
+    $wp_customize,
+    'luxury_jewels_swatch_info_control',
+    [
+      'section'  => 'luxury_jewels_swatch_info_section',
+      'settings' => 'luxury_jewels_swatch_info_setting',
+      'type' => 'hidden', // Renders description without an input field.
+      'description' => '<p>' . sprintf(
+        /* translators: %s: URL to the product attributes admin page. */
+        __('To set whether an attribute (like Metal or Size) should appear as a color swatch or a button, you must configure it on the <a href="%s" target="_blank">Product Attributes page</a>. From there, you can edit each attribute and set its "Display Type".', 'luxury-jewels'),
+        esc_url(admin_url('edit.php?post_type=product&page=product_attributes'))
+      ) . '</p>',
+    ]
+  ));
 }
 add_action('customize_register', 'luxury_jewels_customize_register');
 

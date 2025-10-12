@@ -1,10 +1,21 @@
-/*
+/*!
 Theme Name:  Luxury Jewels
-*/
+Theme URI:   https://fiery.tools/luxury-jewels
+Author:      Fiery Tools
+Author URI:  https://fiery.tools
+Description: A free premium theme for a luxury jewelry store.
+Version:       1.0.2
+License:     GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: luxury-jewels
+Tags:        e-commerce, responsive-layout, jewelry, luxury, woocommerce
 
-/*--------------------------------------------------------------
-# 1. Theme Variables & Global Setup
---------------------------------------------------------------*/
+Requires at least: 6.0
+Tested up to:      6.4
+Requires PHP:      7.4
+WC requires at least: 8.0
+WC tested up to:      8.2
+*/
 :root {
     /* --- THEME DEFAULTS --- */
     --default-font-body: 'Lato', sans-serif;
@@ -552,13 +563,14 @@ input[type="submit"]:hover {
 
 .shop-container {
     display: grid;
-    gap: 3em;
+    gap: 1em;
 }
 
 .shop-container .shop-content,
 .shop-container .widget-area {
-    padding-left: 2em;
-    padding-right: 2em;
+    /* background-color: red; */
+    padding-left: 1em !important;
+    padding-right: 1em !important;
 }
 
 .shop-sidebar-right-sidebar .shop-container {
@@ -577,6 +589,37 @@ input[type="submit"]:hover {
     padding: 0;
     grid-column: 1 / 2;
     grid-row: 1;
+}
+
+/*
+ * Hide WooCommerce Sidebar on Tablet & Mobile
+ * This media query targets screen sizes 1024px and smaller.
+*/
+@media (max-width: 1024px) {
+
+    /*
+     * 1. Hide the sidebar.
+     * The body class makes this rule very specific to this layout.
+    */
+    body.shop-sidebar-left-sidebar aside#secondary.widget-area {
+        display: none;
+    }
+
+    /*
+     * 2. Change the shop grid to a single, full-width column.
+    */
+    body.shop-sidebar-left-sidebar .shop-container {
+        grid-template-columns: 1fr; /* This creates one column taking up 100% of the width */
+    }
+
+    /*
+     * 3. Reset the content's position.
+     * On desktop it was in column 2. This resets it to fill the
+     * new single-column layout.
+    */
+    body.shop-sidebar-left-sidebar .shop-container .shop-content {
+        grid-column: auto;
+    }
 }
 
 /* Sorting Dropdown */
@@ -598,7 +641,7 @@ input[type="submit"]:hover {
     text-align: center;
     color: #fff;
     background-color: var(--color-secondary);
-    background-image: url('assets/images/hero-background.png');
+    background-image: url('assets/images/hero-background.jpg');
     /* This path must be correct */
     background-size: cover;
     background-position: center;
@@ -690,7 +733,7 @@ input[type="submit"]:hover {
     text-align: center;
     background-color: #ffffff;
     border: 1px solid var(--color-border);
-    transition: all 0.3s ease;
+    transition: all 0.3s ease-in-out;
     position: relative;
 }
 
@@ -700,6 +743,10 @@ input[type="submit"]:hover {
     transform: translateY(-5px);
 }
 
+.collection-item img {
+    transition: transform 0.3s ease-in-out;
+}
+
 .collection-item:hover img {
     transform: scale(1.05);
 }
@@ -707,7 +754,7 @@ input[type="submit"]:hover {
 .collection-item h3 {
     font-size: 24px;
     margin: 1em 0 0 0;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease-in-out;
 }
 
 .collection-item:hover h3 {
@@ -725,6 +772,15 @@ input[type="submit"]:hover {
     /* This now works as intended */
     margin: auto;
     padding: 0;
+}
+
+@media (max-width: 768px) {
+    .single-product div.product {
+        grid-template-columns: 1fr; /* Change from two columns to one */
+    }
+    .hide-on-mobile {
+        display: none !important;
+    }
 }
 
 .product-top {
@@ -944,7 +1000,6 @@ hr.divider {
 
 .button-attribute.selected {
     border: 2px solid #2C3E50;
-    padding: 11px 23px;
 }
 
 
@@ -1351,4 +1406,16 @@ select[name="orderby"] {
 /* hide for now */
 .footer-widgets {
     display: none
+}
+
+
+
+.chosen a {
+    color: var(--color-text-headings);
+    background: var(--color-border);
+    padding: 4px 8px;
+}
+
+.woocommerce-info{
+    border-top-color: var(--color-primary-cta);
 }

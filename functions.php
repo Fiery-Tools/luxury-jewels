@@ -11,7 +11,6 @@
 require get_template_directory() . '/includes/customizer.php';
 require get_template_directory() . '/includes/attributes.php';
 require get_template_directory() . '/includes/enqueue.php';
-require get_template_directory() . '/includes/banner.php';
 require get_template_directory() . '/includes/woocommerce-hooks.php';
 
 // Main Theme Setup
@@ -48,14 +47,13 @@ function luxury_jewels_setup()
         )
     );
 
-    register_sidebar(array('name' => esc_html__('Footer Column 1', 'luxury-jewels'), 'id' => 'footer-1'));
-    register_sidebar(array('name' => esc_html__('Footer Column 2', 'luxury-jewels'), 'id' => 'footer-2'));
-    register_sidebar(array('name' => esc_html__('Footer Column 3', 'luxury-jewels'), 'id' => 'footer-3'));
-    register_sidebar(array('name' => esc_html__('Footer Column 4', 'luxury-jewels'), 'id' => 'footer-4'));
+    // todo: footer areas
+    // register_sidebar(array('name' => esc_html__('Footer Column 1', 'luxury-jewels'), 'id' => 'footer-1'));
+    // register_sidebar(array('name' => esc_html__('Footer Column 2', 'luxury-jewels'), 'id' => 'footer-2'));
+    // register_sidebar(array('name' => esc_html__('Footer Column 3', 'luxury-jewels'), 'id' => 'footer-3'));
+    // register_sidebar(array('name' => esc_html__('Footer Column 4', 'luxury-jewels'), 'id' => 'footer-4'));
 }
 add_action('after_setup_theme', 'luxury_jewels_setup');
-
-
 
 // Custom navigation that merges theme menu with user's custom links
 function luxury_jewels_custom_nav_menu()
@@ -84,11 +82,32 @@ function luxury_jewels_custom_nav_menu()
         'url'   => home_url('/'),
     );
 
+    // let's get the top 3 categories in shop
     if (class_exists('WooCommerce')) {
-        $core_items[] = array(
-            'title' => 'Shop',
-            'url'   => wc_get_page_permalink('shop'),
+        // $core_items[] = array(
+        //     'title' => 'Shop',
+        //     'url'   => wc_get_page_permalink('shop'),
+        // );
+
+        $category_args = array(
+            'taxonomy'     => 'product_cat',
+            'number'       => 3,
+            'parent'       => 0, // Only top-level categories
+            'hide_empty'   => true,
+            'orderby'      => 'count',
+            'order'        => 'DESC'
         );
+        $product_categories = get_terms($category_args);
+
+        if (!is_wp_error($product_categories) && !empty($product_categories)) {
+            foreach ($product_categories as $category) {
+                $core_items[] = array(
+                    'title' => $category->name,
+                    'url'   => get_term_link($category),
+                    'class' => 'hide-on-mobile',
+                );
+            }
+        }
 
         $cart_count = WC()->cart->get_cart_contents_count();
         $badge_html = '';
@@ -132,25 +151,11 @@ function luxury_jewels_custom_nav_menu()
     // Output the menu
     echo '<ul id="primary-menu" class="menu">';
     foreach ($all_items as $item) {
-        echo '<li><a href="' . esc_url($item['url']) . '">' . $item['title'] . '</a></li>';
+        $li_class = isset($item['class']) ? ' class="' . esc_attr($item['class']) . '"' : '';
+        echo '<li' . $li_class . '><a href="' . esc_url($item['url']) . '">' . $item['title'] . '</a></li>';
     }
     echo '</ul>';
 }
-
-// Update cart badge via AJAX when items are added to cart
-// add_filter('woocommerce_add_to_cart_fragments', function ($fragments) {
-//     $cart_count = WC()->cart->get_cart_contents_count();
-
-//     ob_start();
-//     if ($cart_count > 0) :
-// >
-//         <span class="cart-count-badge"><?php echo $cart_count; ></span>
-// <php
-//     endif;
-//     $fragments['.cart-count-badge'] = ob_get_clean();
-
-//     return $fragments;
-// });
 
 /**
  * Add custom classes to the array of body classes.
@@ -208,21 +213,10 @@ function luxury_jewels_footer_body_classes( $classes ) {
 }
 add_filter( 'body_class', 'luxury_jewels_footer_body_classes' );
 
-
-
-
-
-
-
-
 add_action( 'init', 'custom_jewelry_product_summary_order' );
 function custom_jewelry_product_summary_order() {
     // This function removes all default actions from the product summary
     remove_all_actions( 'woocommerce_single_product_summary' );
-
-    // Re-add actions in your desired order
-
-    // Add SKU and Category at the very top (Priority < 5)
     add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 4 );
 
     // Add the rest of the elements in their new order
@@ -238,6 +232,4 @@ function custom_jewelry_product_summary_order() {
 function luxury_jewels_divider() {
     echo '<hr class="divider" />';
 }
-
-
 

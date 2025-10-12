@@ -80,9 +80,9 @@ if (! is_a($product, WC_Product::class) || ! $product->is_visible()) {
 
 
 								if ($swatch_color) {
-									echo '<a href="' . $link . '"><div class="swatch-attribute swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($swatch_color) . ';" title="' . esc_attr($term->name) . '"></div></a>';
+									echo '<div class="swatch-attribute swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($swatch_color) . ';" title="' . esc_attr($term->name) . '"></div>';
 								} else {
-									echo '<a href="' . $link . '"><div class="swatch-attribute swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($term->name) . ';" title="' . esc_attr($term->name) . '"></div></a>';
+									echo '<div class="swatch-attribute swatch-color" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($term->name) . ';" title="' . esc_attr($term->name) . '"></div>';
 								}
 							}
 
@@ -121,7 +121,7 @@ if (! is_a($product, WC_Product::class) || ! $product->is_visible()) {
 
 							foreach ($terms as $term) {
 								$link = "";
-								echo '<a href="' . $link . '"><div class="button-attribute sm" data-value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</div></a>';
+								echo '<div class="button-attribute sm" data-value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</div>';
 							}
 
 

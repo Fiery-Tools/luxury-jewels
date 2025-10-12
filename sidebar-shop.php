@@ -98,25 +98,31 @@ if (! empty($luxury_jewels_taxonomies)) {
 							$is_active = in_array($term->slug, $current_filters);
 							$swatch_color = get_term_meta($term->term_id, '_swatch_color', true);
 
+							// Create a temporary array of filters for generating the link for this specific term
+							$link_filters = $current_filters;
 							if ($is_active) {
-								$temp_filters = array_diff($temp_filters, array($term->slug));
+								$link_filters = array_diff($link_filters, array($term->slug));
 							} else {
-								$temp_filters[] = $term->slug;
+								$link_filters[] = $term->slug;
 							}
 
-							if (! empty($temp_filters)) {
-								$link = add_query_arg($filter_name, implode(',', $temp_filters));
+							$query_type_name = 'query_type_' . $taxonomy_data['name'];
+							if (! empty($link_filters)) {
+								$link = add_query_arg(array(
+									$filter_name     => implode(',', $link_filters),
+									$query_type_name => 'or',
+								));
 							} else {
-								$link = remove_query_arg($filter_name);
+								$link = remove_query_arg(array($filter_name, $query_type_name));
 							}
 
 							$label = esc_html($term->name);
 							$selected = in_array($term->slug, $current_filters) ? " selected" : "";
 
 							if ($swatch_color) {
-								echo '<a href="' . $link . '"><div class="swatch-attribute swatch-color' . $selected . '" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($swatch_color) . ';" title="' . esc_attr($term->name) . '"></div></a>';
+								echo '<a href="' . esc_url($link) . '"><div class="swatch-attribute swatch-color' . $selected . '" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($swatch_color) . ';" title="' . esc_attr($term->name) . '"></div></a>';
 							} else {
-								echo '<a href="' . $link . '"><div class="swatch-attribute swatch-color' . $selected . '" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($term->name) . ';" title="' . esc_attr($term->name) . '"></div></a>';
+								echo '<a href="' . esc_url($link) . '"><div class="swatch-attribute swatch-color' . $selected . '" data-value="' . esc_attr($term->slug) . '" style="background-color:' . esc_attr($term->name) . ';" title="' . esc_attr($term->name) . '"></div></a>';
 							}
 						}
 
@@ -133,14 +139,17 @@ if (! empty($luxury_jewels_taxonomies)) {
 							$is_active = in_array($term->slug, $current_filters);
 							$swatch_color = get_term_meta($term->term_id, '_swatch_color', true);
 
+							// Create a temporary array of filters for generating the link for this specific term
+							$link_filters = $current_filters;
 							if ($is_active) {
-								$temp_filters = array_diff($temp_filters, array($term->slug));
+								$link_filters = array_diff($link_filters, array($term->slug));
 							} else {
-								$temp_filters[] = $term->slug;
+								$link_filters[] = $term->slug;
 							}
 
-							if (! empty($temp_filters)) {
-								$link = add_query_arg($filter_name, implode(',', $temp_filters));
+							// Build the link
+							if (! empty($link_filters)) {
+								$link = add_query_arg($filter_name, implode(',', $link_filters));
 							} else {
 								$link = remove_query_arg($filter_name);
 							}
@@ -148,7 +157,7 @@ if (! empty($luxury_jewels_taxonomies)) {
 							$label = esc_html($term->name);
 							$selected = in_array($term->slug, $current_filters) ? " selected" : "";
 
-							echo '<a href="' . $link . '"><div class="button-attribute ' . $selected . '" data-value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</div></a>';
+							echo '<a href="' . esc_url($link) . '"><div class="button-attribute sm' . $selected . '" data-value="' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</div></a>';
 						}
 						echo '</div>';
 
