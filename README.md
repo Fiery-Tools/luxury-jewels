@@ -2,6 +2,8 @@
 
 A premium theme designed for luxury jewelry stores, offering extensive customization options to create a unique and elegant online shopping experience.
 
+![Luxury Jewels Theme Screenshot](screenshot.jpg)
+
 ## Theme Customization
 
 This theme is highly customizable. The primary methods for customization are the WordPress Customizer and the Product Attributes management screen.
