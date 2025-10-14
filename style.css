@@ -1,15 +1,15 @@
 /*!
 Theme Name:  Luxury Jewels
-Theme URI:   https://fiery.tools/luxury-jewels
+Theme URI:   https://fiery.tools/themes/luxury-jewels
+Text Domain: luxury-jewels
 Author:      Fiery Tools
+Copyright:   2025 Fiery Tools
 Author URI:  https://fiery.tools
 Description: A free premium theme for a luxury jewelry store.
-Version:       1.0.2
+Version:       1.0.17
 License:     GNU General Public License v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: luxury-jewels
-Tags:        e-commerce, responsive-layout, jewelry, luxury, woocommerce
-
+Tags: e-commerce, custom-background, custom-logo, custom-menu, editor-style, featured-images, flexible-header, footer-widgets, full-width-template,  two-columns,  three-columns,  four-columns, right-sidebar, left-sidebar, theme-options
 Requires at least: 6.0
 Tested up to:      6.4
 Requires PHP:      7.4
@@ -340,17 +340,42 @@ input[type="submit"]:hover {
     width: 100%;
 }
 
-.cart-count-badge {
-    background-color: var(--color-accent);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 6px 10px;
-    border-radius: 20px;
-    margin-left: 8px;
-    vertical-align: middle;
-}
 
+	#primary-menu a {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		#primary-menu .cart-icon-wrapper {
+			position: relative;
+			display: inline-flex;
+			align-items: center;
+		}
+
+		#primary-menu .cart-count-badge {
+			    color: var(--color-header-bg);
+    position: absolute !important;
+    top: -6px !important;
+    left: 12px !important;
+    height: 18px !important;
+    padding: 0 5px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 18px !important;
+    text-align: center !important;
+    border-radius: 9px !important;
+    background: var(--color-accent);
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+			z-index: 10 !important;
+		}
+
+        #primary-menu .text{
+            margin-left: 8px;
+
+        }
 /* Header Layouts & Sticky */
 .header-layout-centered {
     flex-direction: column;
@@ -1418,4 +1443,97 @@ select[name="orderby"] {
 
 .woocommerce-info{
     border-top-color: var(--color-primary-cta);
+}
+
+.screen-reader-text {
+  border: 0;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute !important;
+  width: 1px;
+  word-wrap: normal !important; /* Many screen reader and browser combinations announce broken words as they would appear visually. */
+}
+
+.screen-reader-text:focus {
+  background-color: var(--default-color-background, #FAF8F3);
+  clip: auto !important;
+  clip-path: none;
+  color: var(--default-color-text-headings, #1A1A1A);
+  display: block;
+  font-family: var(--default-font-body, 'Lato', sans-serif);
+  font-size: 1em;
+  height: auto;
+  left: 5px;
+  line-height: normal;
+  padding: 15px 23px 14px;
+  text-decoration: none;
+  top: 5px;
+  width: auto;
+  z-index: 100000;  /* Above WP toolbar. */
+  border: 2px solid var(--default-color-accent, #D4AF37);
+}
+
+/* --------------------------------------------------------------------------
+ *  Content & Image Alignment
+ * -------------------------------------------------------------------------- */
+
+.alignleft {
+	float: left;
+	margin-right: 1.5em;
+	margin-bottom: 1.5em;
+}
+
+.alignright {
+	float: right;
+	margin-left: 1.5em;
+	margin-bottom: 1.5em;
+}
+
+.aligncenter {
+	clear: both;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 1.5em;
+}
+
+
+/* --------------------------------------------------------------------------
+ *  Captions for Images
+ * -------------------------------------------------------------------------- */
+
+.wp-caption {
+	margin-bottom: 1.5em;
+	max-width: 100%; /* Important for responsive images */
+}
+
+.wp-caption img[class*="wp-image-"] {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.wp-caption .wp-caption-text,
+.gallery-caption {
+	font-size: 0.9em;
+	line-height: 1.5;
+	color: #666;
+	padding: 0.5em 0;
+	text-align: center;
+}
+
+
+/* --------------------------------------------------------------------------
+ *  Comments
+ * -------------------------------------------------------------------------- */
+
+/* Style for comments made by the post's author */
+.bypostauthor {
+	border: 1px solid #ddd;
+	padding: 1em;
+	border-radius: 3px;
 }

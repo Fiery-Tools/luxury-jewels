@@ -2,7 +2,7 @@
 /**
  * The header for our theme
  *
- * @package Luxury_Jewels
+ * @package luxury-jewels
  */
 ?>
 <!doctype html>
@@ -16,8 +16,10 @@
 </head>
 
 <body <?php body_class(); ?>>
+    <?php wp_body_open(); ?>
+
 <div id="page" class="site">
-    <a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'luxuryjewels' ); ?></a>
+    <a class="skip-link screen-reader-text" href="#content"><?php esc_html_e( 'Skip to content', 'luxury-jewels' ); ?></a>
 
     <header id="masthead" class="site-header" role="banner">
         <?php

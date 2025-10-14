@@ -3,7 +3,7 @@
  * All WooCommerce custom hooks and functions for the Luxury Jewels theme.
  * FINAL CLEANED VERSION.
  *
- * @package Luxury_Jewels
+ * @package luxury-jewels
  */
 
 if (!defined('ABSPATH')) {

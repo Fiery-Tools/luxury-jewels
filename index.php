@@ -2,7 +2,7 @@
 /**
  * The main template file
  *
- * @package Luxury_Jewels
+ * @package luxury-jewels
  */
 
 get_header(); ?>

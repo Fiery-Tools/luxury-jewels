@@ -6,15 +6,22 @@ jQuery(document).ready(function($) {
       let value = target.getAttribute('data-value')
       let title = target.title || target.innerText || value
       let option = $(container).closest('.variation-row').find('select option').get().find(o => o.value === value || o.value === title)
+      let wsSelected = $(target).addClass('selected')
+      if(option){
+        let select = option.closest('select')
+        select.value = option.value
+        $(select).trigger('change');
+        $(container).closest('.variation-row').find('.selected-variation-name').text(title)
+        $(target).parent().find('.button-attribute,.swatch-attribute').removeClass('selected')
+      }
 
-      let select = option.closest('select')
-      select.value = option.value
-      $(select).trigger('change');
-      $(container).closest('.variation-row').find('.selected-variation-name').text(title)
+      if(wsSelected) {
+        $(target).removeClass('selected')
+      } else {
+        $(target).addClass('selected')
+      }
 
-      $(target).parent().find('.button-attribute,.swatch-attribute').removeClass('selected')
 
-      $(target).addClass('selected')
 
     })
   }

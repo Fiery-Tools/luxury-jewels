@@ -3,7 +3,7 @@
 /**
  * Template for the homepage
  *
- * @package Luxury_Jewels
+ * @package luxury-jewels
  */
 
 get_header();

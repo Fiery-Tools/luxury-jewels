@@ -2,9 +2,9 @@
 // In your theme's functions.php or a dedicated include file.
 
 // Ensure the class doesn't exist before declaring it.
-if (! class_exists('MyTheme_Attribute_Fields')) {
+if (! class_exists('Luxury_Jewels_Attribute_Fields')) {
 
-  class MyTheme_Attribute_Fields
+  class Luxury_Jewels_Attribute_Fields
   {
 
     /**
@@ -76,7 +76,7 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
         wp_enqueue_style('wp-color-picker');
 
         wp_enqueue_script(
-          'mytheme-admin-script',
+          'luxury-jewels-admin-script',
           get_template_directory_uri() . '/js/admin-script.js',
           array('jquery', 'wp-color-picker'),
           '1.0.3',
@@ -93,9 +93,9 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
     {
     ?>
       <div class="form-field term-color-wrap">
-        <label for="term-color"><?php _e('Swatch Color', 'mytheme'); ?></label>
+        <label for="term-color"><?php _e('Swatch Color', 'luxury-jewels'); ?></label>
         <input name="_swatch_color" value="#ffffff" class="color-picker" id="term-color" />
-        <p><?php _e('The hex code for the swatch. Leave blank if using an image.', 'mytheme'); ?></p>
+        <p><?php _e('The hex code for the swatch. Leave blank if using an image.', 'luxury-jewels'); ?></p>
       </div>
     <?php
     }
@@ -112,11 +112,11 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
     ?>
       <tr class="form-field term-color-wrap">
         <th scope="row">
-          <label for="term-color"><?php _e('Swatch Color', 'mytheme'); ?></label>
+          <label for="term-color"><?php _e('Swatch Color', 'luxury-jewels'); ?></label>
         </th>
         <td>
           <input name="_swatch_color" value="<?php echo esc_attr($color); ?>" class="color-picker" id="term-color" />
-          <p class="description"><?php _e('The hex code for the swatch. Leave blank if using an image.', 'mytheme'); ?></p>
+          <p class="description"><?php _e('The hex code for the swatch. Leave blank if using an image.', 'luxury-jewels'); ?></p>
         </td>
       </tr>
     <?php
@@ -197,9 +197,9 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
     {
     ?>
       <div class="form-field">
-        <label for="attribute_position"><?php _e('Position', 'mytheme'); ?></label>
+        <label for="attribute_position"><?php _e('Position', 'luxury-jewels'); ?></label>
         <input type="number" name="_position" id="attribute_position" value="0" style="width: 100px;">
-        <p class="description"><?php _e('A number to control the display order of this attribute in filters.', 'mytheme'); ?></p>
+        <p class="description"><?php _e('A number to control the display order of this attribute in filters.', 'luxury-jewels'); ?></p>
       </div>
     <?php
     }
@@ -217,11 +217,11 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
     ?>
       <tr class="form-field">
         <th scope="row" valign="top">
-          <label for="attribute_position"><?php _e('Position', 'mytheme'); ?></label>
+          <label for="attribute_position"><?php _e('Position', 'luxury-jewels'); ?></label>
         </th>
         <td>
           <input type="number" name="_position" value="<?php echo esc_attr($position); ?>" id="attribute_position" style="width: 100px;" />
-          <p class="description"><?php _e('A number to control the display order of this attribute in filters.', 'mytheme'); ?></p>
+          <p class="description"><?php _e('A number to control the display order of this attribute in filters.', 'luxury-jewels'); ?></p>
         </td>
       </tr>
     <?php
@@ -246,9 +246,9 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
       <div class="form-field">
         <label for="attribute_display_in_card">
           <input type="checkbox" name="_display_in_card" id="attribute_display_in_card" value="yes" />
-          <?php _e('Display in Product Card?', 'mytheme'); ?>
+          <?php _e('Display in Product Card?', 'luxury-jewels'); ?>
         </label>
-        <p class="description"><?php _e('If checked, this attribute will be visible on the shop/archive page product cards.', 'mytheme'); ?></p>
+        <p class="description"><?php _e('If checked, this attribute will be visible on the shop/archive page product cards.', 'luxury-jewels'); ?></p>
       </div>
     <?php
     }
@@ -266,11 +266,11 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
     ?>
       <tr class="form-field">
         <th scope="row" valign="top">
-          <label for="attribute_display_in_card"><?php _e('Display in Product Card', 'mytheme'); ?></label>
+          <label for="attribute_display_in_card"><?php _e('Display in Product Card', 'luxury-jewels'); ?></label>
         </th>
         <td>
           <input type="checkbox" name="_display_in_card" id="attribute_display_in_card" value="yes" <?php checked($display_in_card, 'yes'); ?> />
-          <p class="description"><?php _e('If checked, this attribute will be visible on the shop/archive page product cards.', 'mytheme'); ?></p>
+          <p class="description"><?php _e('If checked, this attribute will be visible on the shop/archive page product cards.', 'luxury-jewels'); ?></p>
         </td>
       </tr>
     <?php
@@ -291,12 +291,12 @@ if (! class_exists('MyTheme_Attribute_Fields')) {
    */
 }
 
-function mytheme_instantiate_attribute_fields_class()
+function Luxury_Jewels_instantiate_attribute_fields_class()
 {
-  new MyTheme_Attribute_Fields();
+  new Luxury_Jewels_Attribute_Fields();
 }
 
-add_action('init', 'mytheme_instantiate_attribute_fields_class');
+add_action('init', 'Luxury_Jewels_instantiate_attribute_fields_class');
 
 $luxury_jewels_taxonomies = array_map(function ($taxonomy) {
   return [

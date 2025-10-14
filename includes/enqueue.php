@@ -2,7 +2,7 @@
 /**
  * Enqueue scripts and styles for the Luxury Jewels theme.
  *
- * @package Luxury_Jewels
+ * @package luxury-jewels
  */
 
 if (!defined('ABSPATH')) {
@@ -10,12 +10,34 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Enqueue custom theme scripts.
+ * Enqueue all theme scripts and styles.
  */
-function luxury_jewels_enqueue_scripts() {
+function luxury_jewels_enqueue_assets() {
+    // Get the theme version dynamically so you don't have to update it here.
     $theme_version = wp_get_theme()->get('Version');
 
-    // On single product pages, we disable the default WooCommerce tab script
+    // === STYLES ===
+
+    // Enqueue Google Fonts
+    wp_enqueue_style(
+        'luxury-jewels-fonts',
+        'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Lato:wght@400;700&display=swap',
+        [],
+        null // Google Fonts do not need a version number.
+    );
+
+    // Enqueue the main stylesheet.
+    wp_enqueue_style(
+        'luxury-jewels-style',
+        get_stylesheet_uri(),
+        [], // No dependencies
+        $theme_version
+    );
+
+
+    // === SCRIPTS ===
+
+    // On single product pages, disable the default WooCommerce tab script
     if ( is_product() ) {
         wp_dequeue_script( 'wc-tabs' );
     }
@@ -28,21 +50,13 @@ function luxury_jewels_enqueue_scripts() {
         $theme_version,
         true
     );
+
+    // FIX: Enqueue the comment-reply script to resolve the theme check recommendation.
+    // This is the only new logic being added.
+    if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
+        wp_enqueue_script( 'comment-reply' );
+    }
 }
-add_action('wp_enqueue_scripts', 'luxury_jewels_enqueue_scripts', 100); // Use a high priority
-
-// Enqueue styles
-function luxury_jewels_scripts()
-{
-    $theme_version = wp_get_theme()->get('Version');
-    wp_enqueue_style(
-        'luxury-jewels-fonts',
-        'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Lato:wght@400;700&display=swap',
-        [],
-        $theme_version
-    );
-    wp_enqueue_style('luxury-jewels-style', get_stylesheet_uri());
-}
-add_action('wp_enqueue_scripts', 'luxury_jewels_scripts');
-
-
+// Use a high priority (100) to ensure this runs after WooCommerce adds its scripts,
+// which is necessary for your wp_dequeue_script() call to work correctly.
+add_action('wp_enqueue_scripts', 'luxury_jewels_enqueue_assets', 100);

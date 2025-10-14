@@ -4,3 +4,8 @@
 /.context
 /context.sh
 /.vscode
+/x.php
+/killme
+/.aider.input.history
+/.aider.chat.history.md
+/.gitignore

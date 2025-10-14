@@ -7,7 +7,7 @@
  * generated set of filters based on product attributes, ensuring a
  * consistent and powerful filtering experience.
  *
- * @package Luxury_Jewels
+ * @package luxury-jewels
  */
 
 if (! defined('ABSPATH')) {

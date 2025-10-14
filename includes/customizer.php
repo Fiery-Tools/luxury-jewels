@@ -3,7 +3,7 @@
 /**
  * Luxury Jewels Theme Customizer functionality (Semantic Version)
  *
- * @package LuxuryJewelsTheme
+ * @package luxury-jewels
  */
 
 /**
@@ -168,44 +168,6 @@ function luxury_jewels_customize_register($wp_customize)
     'palettes' => $luxury_jewels_palette,
   ]));
 
-  // --- Footer Section ---
-  $wp_customize->add_section('luxury_jewels_footer_section', [
-    'title' => __('Footer Options', 'luxury-jewels'),
-    'priority' => 40,
-    'panel' => 'luxury_jewels_options_panel',
-  ]);
-
-  // Control for Footer Widget Columns
-  $wp_customize->add_setting('luxury_jewels_footer_widget_columns', [
-    'default' => 4,
-    'sanitize_callback' => 'absint',
-  ]);
-
-  $wp_customize->add_control('luxury_jewels_footer_widget_columns_control', [
-    'label' => __('Footer Widget Columns', 'luxury-jewels'),
-    'section' => 'luxury_jewels_footer_section',
-    'settings' => 'luxury_jewels_footer_widget_columns',
-    'type' => 'select',
-    'choices' => [
-      '1' => __('1 Column', 'luxury-jewels'),
-      '2' => __('2 Columns', 'luxury-jewels'),
-      '3' => __('3 Columns', 'luxury-jewels'),
-      '4' => __('4 Columns', 'luxury-jewels'),
-    ],
-  ]);
-
-  $wp_customize->add_setting('luxury_jewels_copyright_text', [
-    'default' => 'Copyright &copy; ' . date('Y') . ' Luxury Jewels. All Rights Reserved.',
-    'sanitize_callback' => 'wp_kses_post', // Allows basic HTML like links
-  ]);
-
-  $wp_customize->add_control('luxury_jewels_copyright_text_control', [
-    'label' => __('Copyright Text', 'luxury-jewels'),
-    'section' => 'luxury_jewels_footer_section',
-    'settings' => 'luxury_jewels_copyright_text',
-    'type' => 'textarea',
-  ]);
-
   // --- Shop Layout Section (NEW) ---
   $wp_customize->add_section('luxury_jewels_shop_section', [
     'title' => __('Shop & Product Pages', 'luxury-jewels'),
@@ -259,9 +221,6 @@ function luxury_jewels_customize_register($wp_customize)
     'settings' => 'luxury_jewels_sale_badge_text',
     'type' => 'text',
   ]);
-
-
-
 
   $wp_customize->add_section('luxury_jewels_global_tabs_section', array(
     'title'       => __('Global Product Tabs', 'luxury-jewels'),
@@ -366,8 +325,6 @@ function luxury_jewels_generate_customizer_css()
     '--custom-font-headings'      => ['setting' => 'luxury_jewels_font_headings', 'default' => 'Cormorant Garamond', 'is_font' => true, 'suffix' => ", serif"],
     '--custom-font-body'          => ['setting' => 'luxury_jewels_font_body', 'default' => 'Lato', 'is_font' => true, 'suffix' => ", sans-serif"],
   ];
-
-
 
   foreach ($settings_map as $css_var => $data) {
     $value = get_theme_mod($data['setting'], $data['default']);

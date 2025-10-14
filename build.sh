@@ -61,7 +61,9 @@ cp -r \
   functions.php \
   header.php \
   index.php \
+  comments.php \
   page.php \
+  readme.txt \
   screenshot.jpg \
   sidebar-shop.php* \
   woocommerce.php \
