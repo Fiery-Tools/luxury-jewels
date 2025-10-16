@@ -36,13 +36,14 @@
                 // Loop through and display the active widget columns.
                 for ($i = 1; $i <= $footer_columns; $i++) {
                     if (is_active_sidebar('footer-' . $i)) {
+                        // this code is reached
                         echo '<div class="widget-area footer-column-' . esc_attr($i) . '">';
                         dynamic_sidebar('footer-' . $i);
                         echo '</div>';
                     }
                 }
                 ?>
-            </div><!-- .footer-widgets -->
+            </div>
         <?php endif; ?>
 
         <div class="site-info">
@@ -51,6 +52,10 @@
             echo wp_kses_post(get_theme_mod('luxury_jewels_copyright_text', 'Copyright &copy; ' . date('Y') . ' ' . get_bloginfo('name') . '. All Rights Reserved.'));
             ?>
         </div><!-- .site-info -->
+        <div>
+
+            <!-- luxury_jewels_display_payment_icons(); -->
+        </div>
     </footer><!-- #colophon -->
 </div>
 </div><!-- #page -->

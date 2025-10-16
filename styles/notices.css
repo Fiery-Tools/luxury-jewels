@@ -1,0 +1,59 @@
+/*--------------------------------------------------------------
+# 5.1 WooCommerce Notice Overrides
+--------------------------------------------------------------*/
+
+/* --- Hide the default WooCommerce checkmark icon --- */
+.woocommerce-message::before {
+    display: none !important;
+}
+
+/* --- Main Message Container Styling --- */
+.woocommerce-message {
+    /* Layout & Alignment */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5em 2em !important;
+
+    /* Thematic Styling */
+    border-top: 3px solid var(--color-accent) !important;
+    background-color: var(--color-background) !important;
+    color: var(--color-text-body) !important;
+    margin-bottom: 2em !important;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+}
+
+.woocommerce-info{
+    border-top-color: var(--color-primary-cta);
+}
+
+/* --- "View Cart" Button (Thematic Styling Applied) --- */
+.woocommerce-message .button.wc-forward {
+    /* Spacing */
+    margin-left: 2em !important;
+    flex-shrink: 0;
+
+    /* THEME COLORS APPLIED */
+    color: #fff !important;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%) !important;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3) !important;
+    border: none !important;
+
+    /* Replicating Global Button Typography & Shape */
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    border-radius: 0;
+    padding: 1em 2.5em !important;
+    line-height: 1.2;
+}
+
+.wc-block-cart-item__remove-link {
+    color: var(--color-accent) !important;
+}
+
+.wp-block-woocommerce-product-filter-clear-button {
+    color: red;
+}

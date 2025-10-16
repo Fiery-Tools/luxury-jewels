@@ -220,6 +220,20 @@ function luxury_jewels_layered_nav_list_args($list_args) {
 add_filter('woocommerce_layered_nav_list_args', 'luxury_jewels_layered_nav_list_args');
 
 
+// =============================================================================
+// == 7. SINGLE PRODUCT PAGE LAYOUT
+// =============================================================================
+
+/**
+ * Unhooks the product meta from its default location on the single product page.
+ * The meta is then re-added directly in the `content-single-product.php` template.
+ */
+function luxury_jewels_unhook_product_meta() {
+    remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
+}
+add_action( 'wp', 'luxury_jewels_unhook_product_meta' );
+
+
 /**
  * Displays previous/next product navigation on single product pages.
  *

@@ -1,369 +1,85 @@
 <?php
-
 /**
- * Luxury Jewels Theme Customizer functionality (Semantic Version)
+ * Luxury Jewels Theme Customizer Orchestrator
+ *
+ * This file sets up the main Customizer panel and loads all sub-module classes.
  *
  * @package luxury-jewels
  */
 
+// Define the customizer sub-directory path for easy access.
+define( 'LUXURY_JEWELS_CUSTOMIZER_DIR', trailingslashit( get_template_directory() ) . 'includes/customizer/' );
+
 /**
- * Register all theme options in the WordPress Customizer.
+ * Load all customizer sub-modules.
  */
-function luxury_jewels_customize_register($wp_customize)
-{
-
-  $luxury_jewels_palette = ['#D4AF37', '#B8941E', '#E8D4A0', '#1A1A1A', '#2C2C2C', '#FAF8F3', '#333333', '#666666', '#E5DDD0'];
-
-  $wp_customize->add_panel('luxury_jewels_options_panel', [
-    'title' => __('Luxury Theme Options', 'luxury-jewels'),
-    'priority' => 10,
-  ]);
-
-
-  // --- Header Options Section (NEW) ---
-  $wp_customize->add_section('luxury_jewels_header_section', [
-    'title' => __('Header & Navigation', 'luxury-jewels'),
-    'priority' => 15,
-    'panel' => 'luxury_jewels_options_panel',
-  ]);
-
-  $wp_customize->add_setting('luxury_jewels_logo_size', [
-    'default' => 180,
-    'sanitize_callback' => 'absint',
-    'transport' => 'refresh',
-  ]);
-  $wp_customize->add_control('luxury_jewels_logo_size_control', [
-    'label' => __('Logo Max Width (px)', 'luxury-jewels'),
-    'section' => 'luxury_jewels_header_section',
-    'settings' => 'luxury_jewels_logo_size',
-    'type' => 'range',
-    'input_attrs' => ['min' => 50, 'max' => 400, 'step' => 5],
-  ]);
-
-  $wp_customize->add_setting('luxury_jewels_header_layout', [
-    'default' => 'default',
-    'sanitize_callback' => 'sanitize_key',
-  ]);
-  $wp_customize->add_control('luxury_jewels_header_layout_control', [
-    'label' => __('Header Layout', 'luxury-jewels'),
-    'section' => 'luxury_jewels_header_section',
-    'settings' => 'luxury_jewels_header_layout',
-    'type' => 'radio',
-    'choices' => [
-      'default' => __('Logo Left, Navigation Right', 'luxury-jewels'),
-      'centered' => __('Logo Centered, Navigation Below', 'luxury-jewels'),
-    ],
-  ]);
-
-  $wp_customize->add_setting('luxury_jewels_sticky_header', [
-    'default' => 0,
-    'sanitize_callback' => 'absint',
-  ]);
-  $wp_customize->add_control('luxury_jewels_sticky_header_control', [
-    'label' => __('Enable Sticky Header on Scroll', 'luxury-jewels'),
-    'section' => 'luxury_jewels_header_section',
-    'settings' => 'luxury_jewels_sticky_header',
-    'type' => 'checkbox',
-  ]);
-
-
-
-  // --- Brand Colors Section ---
-  $wp_customize->add_section('luxury_jewels_colors_section', [
-    'title' => __('Brand Colors', 'luxury-jewels'),
-    'priority' => 10,
-    'panel' => 'luxury_jewels_options_panel',
-  ]);
-
-  // Semantic setting IDs and user-friendly labels
-  $wp_customize->add_setting('luxury_jewels_color_accent', ['default' => '#D4AF37', 'sanitize_callback' => 'sanitize_hex_color']);
-  $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'luxury_jewels_color_accent_control', [
-    'label' => __('Accent Color (Buttons, Highlights)', 'luxury-jewels'),
-    'section' => 'luxury_jewels_colors_section',
-    'settings' => 'luxury_jewels_color_accent',
-    'palettes' => $luxury_jewels_palette,
-  ]));
-
-  $wp_customize->add_setting('luxury_jewels_color_accent_dark', ['default' => '#B8941E', 'sanitize_callback' => 'sanitize_hex_color']);
-  $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'luxury_jewels_color_accent_dark_control', [
-    'label' => __('Accent Dark (Prices, Hover States)', 'luxury-jewels'),
-    'section' => 'luxury_jewels_colors_section',
-    'settings' => 'luxury_jewels_color_accent_dark',
-    'palettes' => $luxury_jewels_palette,
-  ]));
-
-
-  $wp_customize->add_setting('luxury_jewels_color_primary_cta', [
-    'default' => '#D4AF37', // Default to your existing accent color
-    'sanitize_callback' => 'sanitize_hex_color',
-  ]);
-  $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'luxury_jewels_color_primary_cta_control', [
-    'label' => __('Primary Action Color (Add to Cart)', 'luxury-jewels'),
-    'description' => __('The most important button on the site.', 'luxury-jewels'),
-    'section' => 'luxury_jewels_colors_section',
-    'settings' => 'luxury_jewels_color_primary_cta',
-    'palettes' => $luxury_jewels_palette,
-  ]));
-
-  $wp_customize->add_setting('luxury_jewels_color_background', ['default' => '#FAF8F3', 'sanitize_callback' => 'sanitize_hex_color']);
-  $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'luxury_jewels_color_background_control', [
-    'label' => __('Site Background Color', 'luxury-jewels'),
-    'section' => 'luxury_jewels_colors_section',
-    'settings' => 'luxury_jewels_color_background',
-    'palettes' => $luxury_jewels_palette,
-  ]));
-
-  $wp_customize->add_setting('luxury_jewels_color_text_headings', ['default' => '#1A1A1A', 'sanitize_callback' => 'sanitize_hex_color']);
-  $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'luxury_jewels_color_text_headings_control', [
-    'label' => __('Headings & Titles Color', 'luxury-jewels'),
-    'section' => 'luxury_jewels_colors_section',
-    'settings' => 'luxury_jewels_color_text_headings',
-    'palettes' => $luxury_jewels_palette,
-  ]));
-
-  $wp_customize->add_setting('luxury_jewels_color_text_body', ['default' => '#333333', 'sanitize_callback' => 'sanitize_hex_color']);
-  $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'luxury_jewels_color_text_body_control', [
-    'label' => __('Body Text Color', 'luxury-jewels'),
-    'section' => 'luxury_jewels_colors_section',
-    'settings' => 'luxury_jewels_color_text_body',
-    'palettes' => $luxury_jewels_palette,
-  ]));
-
-  $wp_customize->add_setting('luxury_jewels_color_border', ['default' => '#E5DDD0', 'sanitize_callback' => 'sanitize_hex_color']);
-  $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'luxury_jewels_color_border_control', [
-    'label' => __('Border Color', 'luxury-jewels'),
-    'section' => 'luxury_jewels_colors_section',
-    'settings' => 'luxury_jewels_color_border',
-    'palettes' => $luxury_jewels_palette,
-  ]));
-
-  // --- Typography Section ---
-  $wp_customize->add_section('luxury_jewels_typography_section', [
-    'title' => __('Typography', 'luxury-jewels'),
-    'priority' => 20,
-    'panel' => 'luxury_jewels_options_panel',
-  ]);
-
-  $wp_customize->add_setting('luxury_jewels_font_headings', ['default' => 'Cormorant Garamond', 'sanitize_callback' => 'sanitize_text_field']);
-  $wp_customize->add_control('luxury_jewels_font_headings_control', [
-    'label' => __('Heading Font (Google Fonts)', 'luxury-jewels'),
-    'section' => 'luxury_jewels_typography_section',
-    'settings' => 'luxury_jewels_font_headings',
-    'type' => 'text',
-  ]);
-
-  $wp_customize->add_setting('luxury_jewels_font_body', ['default' => 'Lato', 'sanitize_callback' => 'sanitize_text_field']);
-  $wp_customize->add_control('luxury_jewels_font_body_control', [
-    'label' => __('Body Font (Google Fonts)', 'luxury-jewels'),
-    'section' => 'luxury_jewels_typography_section',
-    'settings' => 'luxury_jewels_font_body',
-    'type' => 'text',
-  ]);
-
-  $wp_customize->add_setting('luxury_jewels_color_header_bg', ['default' => '#ffffff', 'sanitize_callback' => 'sanitize_hex_color']);
-  $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'luxury_jewels_color_header_bg_control', [
-    'label' => __('Header & Footer Background', 'luxury-jewels'),
-    'section' => 'luxury_jewels_colors_section',
-    'settings' => 'luxury_jewels_color_header_bg',
-    'palettes' => $luxury_jewels_palette,
-  ]));
-
-  // --- Shop Layout Section (NEW) ---
-  $wp_customize->add_section('luxury_jewels_shop_section', [
-    'title' => __('Shop & Product Pages', 'luxury-jewels'),
-    'priority' => 25,
-    'panel' => 'luxury_jewels_options_panel',
-  ]);
-
-  $wp_customize->add_setting('luxury_jewels_shop_columns', [
-    'default' => 3,
-    'sanitize_callback' => 'absint',
-  ]);
-
-  $wp_customize->add_control('luxury_jewels_shop_columns_control', [
-    'label' => __('Products Per Row on Shop Page', 'luxury-jewels'),
-    'section' => 'luxury_jewels_shop_section',
-    'settings' => 'luxury_jewels_shop_columns',
-    'type' => 'select',
-    'choices' => [
-      '2' => __('2 Columns', 'luxury-jewels'),
-      '3' => __('3 Columns', 'luxury-jewels'),
-      '4' => __('4 Columns', 'luxury-jewels'),
-    ],
-  ]);
-
-  $wp_customize->add_setting('luxury_jewels_shop_sidebar_layout', [
-    'default' => 'no-sidebar',
-    'sanitize_callback' => 'sanitize_key',
-  ]);
-
-  $wp_customize->add_control('luxury_jewels_shop_sidebar_layout_control', [
-    'label' => __('Shop & Archive Sidebar', 'luxury-jewels'),
-    'section' => 'luxury_jewels_shop_section',
-    'settings' => 'luxury_jewels_shop_sidebar_layout',
-    'type' => 'radio',
-    'choices' => [
-      'no-sidebar'    => __('No Sidebar', 'luxury-jewels'),
-      'left-sidebar'  => __('Left Sidebar', 'luxury-jewels'),
-      'right-sidebar' => __('Right Sidebar', 'luxury-jewels'),
-    ],
-  ]);
-
-  // Control for Sale Badge Text
-  $wp_customize->add_setting('luxury_jewels_sale_badge_text', [
-    'default' => __('Sale!', 'luxury-jewels'),
-    'sanitize_callback' => 'sanitize_text_field',
-  ]);
-
-  $wp_customize->add_control('luxury_jewels_sale_badge_text_control', [
-    'label' => __('Sale Badge Text', 'luxury-jewels'),
-    'section' => 'luxury_jewels_shop_section',
-    'settings' => 'luxury_jewels_sale_badge_text',
-    'type' => 'text',
-  ]);
-
-  $wp_customize->add_section('luxury_jewels_global_tabs_section', array(
-    'title'       => __('Global Product Tabs', 'luxury-jewels'),
-    'priority'    => 160,
-    'description' => __('These tabs will appear on every product page. Leave a tab\'s title and content blank to hide it.', 'luxury-jewels'),
-  ));
-
-  // Define how many global tabs we want to create
-  $number_of_tabs = 3;
-
-  // Loop to create settings and controls for each of the 3 tabs
-  for ($i = 1; $i <= $number_of_tabs; $i++) {
-
-    // --- SEPARATOR (for better UI) ---
-    $wp_customize->add_setting('global_tab_separator_' . $i, array('sanitize_callback' => 'esc_html'));
-    $wp_customize->add_control(new WP_Customize_Control(
-      $wp_customize,
-      'global_tab_separator_control_' . $i,
-      array(
-        'type'     => 'hidden', // We just need it to output HTML
-        'section'  => 'luxury_jewels_global_tabs_section',
-        'settings' => 'global_tab_separator_' . $i,
-        'description' => '<hr><h3>' . sprintf(__('Global Tab #%d', 'luxury-jewels'), $i) . '</h3>',
-      )
-    ));
-
-    // --- TITLE ---
-    $wp_customize->add_setting('global_tab_' . $i . '_title', array(
-      'default'           => '',
-      'sanitize_callback' => 'sanitize_text_field',
-    ));
-
-    $wp_customize->add_control('global_tab_' . $i . '_title_control', array(
-      'label'       => sprintf(__('Tab #%d Title', 'luxury-jewels'), $i),
-      'section'     => 'luxury_jewels_global_tabs_section',
-      'settings'    => 'global_tab_' . $i . '_title',
-      'type'        => 'text',
-    ));
-
-    // --- CONTENT ---
-    $wp_customize->add_setting('global_tab_' . $i . '_content', array(
-      'default'           => '',
-      'sanitize_callback' => 'wp_kses_post',
-    ));
-
-    $wp_customize->add_control('global_tab_' . $i . '_content_control', array(
-      'label'       => sprintf(__('Tab #%d Content', 'luxury-jewels'), $i),
-      'section'     => 'luxury_jewels_global_tabs_section',
-      'settings'    => 'global_tab_' . $i . '_content',
-      'type'        => 'textarea',
-    ));
-  }
-
-  // --- Swatch Information Section ---
-  $wp_customize->add_section('luxury_jewels_swatch_info_section', [
-    'title'       => __('Attribute Display Types', 'luxury-jewels'),
-    'priority'    => 30, // After Shop & Product Pages section
-    'panel'       => 'luxury_jewels_options_panel',
-  ]);
-
-  // Create a dummy setting for the info control
-  $wp_customize->add_setting('luxury_jewels_swatch_info_setting', ['sanitize_callback' => 'esc_html']);
-
-  // Add the control with the descriptive text and link
-  $wp_customize->add_control(new WP_Customize_Control(
-    $wp_customize,
-    'luxury_jewels_swatch_info_control',
-    [
-      'section'  => 'luxury_jewels_swatch_info_section',
-      'settings' => 'luxury_jewels_swatch_info_setting',
-      'type' => 'hidden', // Renders description without an input field.
-      'description' => '<p>' . sprintf(
-        /* translators: %s: URL to the product attributes admin page. */
-        __('To set whether an attribute (like Metal or Size) should appear as a color swatch or a button, you must configure it on the <a href="%s" target="_blank">Product Attributes page</a>. From there, you can edit each attribute and set its "Display Type".', 'luxury-jewels'),
-        esc_url(admin_url('edit.php?post_type=product&page=product_attributes'))
-      ) . '</p>',
-    ]
-  ));
+function luxury_jewels_load_customizer_modules() {
+    // Load sub-classes
+    require_once LUXURY_JEWELS_CUSTOMIZER_DIR . 'header.php';
+    require_once LUXURY_JEWELS_CUSTOMIZER_DIR . 'colors.php';
+    require_once LUXURY_JEWELS_CUSTOMIZER_DIR . 'typography.php';
+    require_once LUXURY_JEWELS_CUSTOMIZER_DIR . 'shop.php';
+    require_once LUXURY_JEWELS_CUSTOMIZER_DIR . 'payment_icons.php';
+    require_once LUXURY_JEWELS_CUSTOMIZER_DIR . 'css_output.php';
+    require_once LUXURY_JEWELS_CUSTOMIZER_DIR . 'footer.php';
 }
-add_action('customize_register', 'luxury_jewels_customize_register');
+add_action( 'after_setup_theme', 'luxury_jewels_load_customizer_modules' );
 
 
 /**
- * Generate and output the dynamic CSS with SEMANTIC custom variables.
+ * Main class to manage the WordPress Customizer registration process.
  */
-function luxury_jewels_generate_customizer_css()
-{
-  $css = '';
+class Luxury_Jewels_Customizer {
 
-  // Map CSS custom properties to their Customizer settings and defaults
-  // Find the $settings_map array in luxury_jewels_generate_customizer_css()
+    /**
+     * The single instance of the class.
+     * @var Luxury_Jewels_Customizer
+     */
+    protected static $instance = null;
 
-  $settings_map = [
-    '--custom-color-accent'       => ['setting' => 'luxury_jewels_color_accent', 'default' => '#D4AF37'],
-    '--custom-color-accent-dark'  => ['setting' => 'luxury_jewels_color_accent_dark', 'default' => '#B8941E'],
-    '--custom-color-background'   => ['setting' => 'luxury_jewels_color_background', 'default' => '#FAF8F3'],
-    '--custom-color-text-headings' => ['setting' => 'luxury_jewels_color_text_headings', 'default' => '#1A1A1A'],
-    '--custom-color-text-body'    => ['setting' => 'luxury_jewels_color_text_body', 'default' => '#333333'],
-    '--custom-color-primary-cta'  => ['setting' => 'luxury_jewels_color_primary_cta', 'default' => '#D4AF37'],
-    '--custom-color-border'       => ['setting' => 'luxury_jewels_color_border', 'default' => '#E5DDD0'],
-    '--custom-color-header-bg'    => ['setting' => 'luxury_jewels_color_header_bg', 'default' => '#ffffff'], // <-- ADD THIS LINE
-    '--custom-font-headings'      => ['setting' => 'luxury_jewels_font_headings', 'default' => 'Cormorant Garamond', 'is_font' => true, 'suffix' => ", serif"],
-    '--custom-font-body'          => ['setting' => 'luxury_jewels_font_body', 'default' => 'Lato', 'is_font' => true, 'suffix' => ", sans-serif"],
-  ];
-
-  foreach ($settings_map as $css_var => $data) {
-    $value = get_theme_mod($data['setting'], $data['default']);
-
-    if (strtolower($value) !== strtolower($data['default'])) {
-      if (! empty($data['is_font'])) {
-        $css .= "    {$css_var}: '{$value}'{$data['suffix']};\n";
-      } else {
-        $css .= "    {$css_var}: {$value};\n";
-      }
+    /**
+     * Get the single instance of this class.
+     * @return Luxury_Jewels_Customizer
+     */
+    public static function init() {
+        if ( is_null( self::$instance ) ) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
-  }
 
-  // Enqueue Google Fonts if they have been changed
-  $heading_font = get_theme_mod('luxury_jewels_font_headings', 'Cormorant Garamond');
-  $body_font    = get_theme_mod('luxury_jewels_font_body', 'Lato');
-  if ($heading_font !== 'Cormorant Garamond' || $body_font !== 'Lato') {
-    $heading_font_safe = str_replace(' ', '+', $heading_font);
-    $body_font_safe    = str_replace(' ', '+', $body_font);
-    wp_enqueue_style('my-theme-google-fonts', "https://fonts.googleapis.com/css2?family={$heading_font_safe}:wght@400;700&family={$body_font_safe}:wght@400;700&display=swap", [], null);
-  }
-
-  // --- Direct CSS Rules (NEW for Logo Size) ---
-  $logo_size = get_theme_mod('luxury_jewels_logo_size', 180);
-  $direct_css = '';
-  if ($logo_size !== 180) {
-    $direct_css .= ".site-branding .custom-logo { max-width: {$logo_size}px; }\n";
-  }
-
-  // --- Final Output ---
-  if (! empty($css) || ! empty($direct_css)) {
-    echo "<style type=\"text/css\" id=\"luxury-jewels-customizer-css\">\n";
-    if (! empty($css)) {
-      echo ":root {\n" . rtrim($css) . "\n}\n";
+    /**
+     * Constructor.
+     */
+    public function __construct() {
+        add_action( 'customize_register', array( $this, 'register_panels_and_sections' ) );
     }
-    if (! empty($direct_css)) {
-      echo $direct_css;
+
+    /**
+     * Register all theme options in the WordPress Customizer.
+     *
+     * @param WP_Customize_Manager $wp_customize The Customizer Manager object.
+     */
+    public function register_panels_and_sections( $wp_customize ) {
+
+        // 1. Add the main panel.
+        $wp_customize->add_panel( 'luxury_jewels_options_panel', [
+            'title'    => __( 'Luxury Jewels Theme Options', 'luxury-jewels' ),
+            'priority' => 10,
+        ] );
+
+        // 2. Instantiate all the Customizer modules.
+        // Each sub-class handles adding its own sections, settings, and controls.
+        new Luxury_Jewels_Customizer_Header( $wp_customize );
+        new Luxury_Jewels_Customizer_Colors( $wp_customize );
+        new Luxury_Jewels_Customizer_Typography( $wp_customize );
+        new Luxury_Jewels_Customizer_Shop( $wp_customize );
+        new Luxury_Jewels_Customizer_Payment_Icons( $wp_customize );
+        new Luxury_Jewels_Customizer_Footer( $wp_customize );
+
+        // The CSS generation is hooked via the CSS_Output class, not instantiated here.
     }
-    echo "</style>\n";
-  }
 }
-add_action('wp_head', 'luxury_jewels_generate_customizer_css');
+
+// Initialize the main Customizer class.
+Luxury_Jewels_Customizer::init();

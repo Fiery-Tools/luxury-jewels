@@ -1,0 +1,43 @@
+:root {
+    /* --- THEME DEFAULTS --- */
+    --default-font-body: 'Lato', sans-serif;
+    --default-font-headings: 'Cormorant Garamond', serif;
+    --default-color-accent: #D4AF37;
+    /* gold */
+    --default-color-accent-dark: #B8941E;
+    /* gold-dark */
+    --default-color-accent-light: #E8D4A0;
+    /* gold-light */
+    --default-color-text-headings: #1A1A1A;
+    /* black */
+    --default-color-secondary: #2C2C2C;
+    /* charcoal */
+    --default-color-background: #FAF8F3;
+    /* cream */
+    --default-color-text-body: #333333;
+    /* text-dark */
+    --default-color-text-subtle: #666666;
+    /* text-light */
+    --default-color-border: #E5DDD0;
+    /* border-light */
+    --default-color-header-bg: #ffffff;
+    /* white */
+    --default-color-primary-cta: var(--default-color-accent);
+    /* Default is the same as the accent color */
+    /* gold */
+
+    /* --- ACTIVE "PROXY" VARIABLES --- */
+    --font-body: var(--custom-font-body, var(--default-font-body));
+    --font-headings: var(--custom-font-headings, var(--default-font-headings));
+    --color-accent: var(--custom-color-accent, var(--default-color-accent));
+    --color-accent-dark: var(--custom-color-accent-dark, var(--default-color-accent-dark));
+    --color-accent-light: var(--custom-color-accent-light, var(--default-color-accent-light));
+    --color-primary-cta: var(--custom-color-primary-cta, var(--default-color-primary-cta));
+    --color-text-headings: var(--custom-color-text-headings, var(--default-color-text-headings));
+    --color-secondary: var(--custom-color-secondary, var(--default-color-secondary));
+    --color-background: var(--custom-color-background, var(--default-color-background));
+    --color-text-body: var(--custom-color-text-body, var(--default-color-text-body));
+    --color-text-subtle: var(--custom-color-text-subtle, var(--default-color-text-subtle));
+    --color-border: var(--custom-color-border, var(--default-color-border));
+    --color-header-bg: var(--custom-color-header-bg, var(--default-color-header-bg));
+}

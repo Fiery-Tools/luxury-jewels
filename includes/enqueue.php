@@ -26,14 +26,34 @@ function luxury_jewels_enqueue_assets() {
         null // Google Fonts do not need a version number.
     );
 
-    // Enqueue the main stylesheet.
-    wp_enqueue_style(
-        'luxury-jewels-style',
-        get_stylesheet_uri(),
-        [], // No dependencies
-        $theme_version
+    // Define the order of modular files for development mode
+    $dev_styles_files = array(
+        'variables',    // Must be first for CSS variables
+        'base',
+        'components',
+        'layout',
+        'home',
+        'shop',
+        'product',
+        'notices',
     );
 
+    $main_style_path = get_stylesheet_directory() . '/style.css';
+    $styles_dir_uri = get_template_directory_uri() . '/styles/';
+
+    if ( file_exists( $main_style_path ) && filesize( $main_style_path ) > 1024 ) {
+        wp_enqueue_style( 'luxury-jewels-style', get_stylesheet_uri(), array(), $theme_version );
+    } else {
+        wp_enqueue_style( 'luxury-jewels-theme-header', get_stylesheet_uri(), array(), $theme_version );
+        foreach ( $dev_styles_files as $file ) {
+            wp_enqueue_style(
+                'luxury-jewels-' . $file,
+                $styles_dir_uri . $file . '.css',
+                array( 'luxury-jewels-theme-header' ), // Dependency ensures correct load order
+                $theme_version
+            );
+        }
+    }
 
     // === SCRIPTS ===
 

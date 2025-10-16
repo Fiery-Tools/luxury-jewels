@@ -1,0 +1,30 @@
+/*!
+Theme Name:  Luxury Jewels
+Theme URI:   https://fiery.tools/themes/luxury-jewels
+Text Domain: luxury-jewels
+Author:      Fiery Tools
+Copyright:   2025 Fiery Tools
+Author URI:  https://fiery.tools
+Description: A free premium theme for a luxury jewelry store.
+Version:       1.0.17
+License:     GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Tags: e-commerce, custom-background, custom-logo, custom-menu, editor-style, featured-images, flexible-header, footer-widgets, full-width-template,  two-columns,  three-columns,  four-columns, right-sidebar, left-sidebar, theme-options
+Requires at least: 6.0
+Tested up to:      6.4
+Requires PHP:      7.4
+WC requires at least: 8.0
+WC tested up to:      8.2
+*/
+
+/*
+ * PostCSS will concatenate all imported files below this banner.
+ */
+@import '../styles/variables.css';
+@import '../styles/base.css';
+@import '../styles/components.css';
+@import '../styles/layout.css';
+@import '../styles/home.css';
+@import '../styles/shop.css';
+@import '../styles/product.css';
+@import '../styles/notices.css';

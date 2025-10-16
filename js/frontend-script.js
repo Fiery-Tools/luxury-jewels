@@ -6,7 +6,7 @@ jQuery(document).ready(function($) {
       let value = target.getAttribute('data-value')
       let title = target.title || target.innerText || value
       let option = $(container).closest('.variation-row').find('select option').get().find(o => o.value === value || o.value === title)
-      let wsSelected = $(target).addClass('selected')
+      let wsSelected = $(target).hasClass('selected')
       if(option){
         let select = option.closest('select')
         select.value = option.value
@@ -15,6 +15,7 @@ jQuery(document).ready(function($) {
         $(target).parent().find('.button-attribute,.swatch-attribute').removeClass('selected')
       }
 
+      console.log({wsSelected, target})
       if(wsSelected) {
         $(target).removeClass('selected')
       } else {

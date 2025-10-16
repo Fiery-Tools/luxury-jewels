@@ -1,0 +1,168 @@
+/*--------------------------------------------------------------
+# 5. WooCommerce Shop & Grid Overrides
+--------------------------------------------------------------*/
+
+/* --- 1. THE GRID CONTAINER --- */
+.woocommerce ul.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Column Overrides from Customizer */
+.shop-columns-2.woocommerce ul.products { grid-template-columns: repeat(2, 1fr) !important; }
+.shop-columns-3.woocommerce ul.products { grid-template-columns: repeat(3, 1fr) !important; }
+.shop-columns-4.woocommerce ul.products { grid-template-columns: repeat(4, 1fr) !important; }
+
+@media (max-width: 768px) {
+    /* Force 2 columns on mobile/tablet */
+    .shop-columns-2 .woocommerce ul.products,
+    .shop-columns-3 .woocommerce ul.products,
+    .shop-columns-4 .woocommerce ul.products {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+
+/* --- 2. INDIVIDUAL PRODUCT CARDS --- */
+.woocommerce ul.products li.product {
+    display: flex;
+    flex-direction: column;
+    width: auto !important;
+    float: none !important;
+    margin: 0 !important;
+    clear: none !important;
+    text-align: left;
+}
+
+.woocommerce ul.products li.product a img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 1em;
+}
+
+/* --- 3. PRODUCT CARD CONTENT --- */
+.woocommerce ul.products li.product .woocommerce-loop-product__title {
+    font-size: 20px;
+    margin-bottom: 0.5em;
+}
+
+.woocommerce ul.products li.product .price {
+    color: var(--color-accent-dark);
+    font-size: 18px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 1em;
+}
+
+.woocommerce ul.products li.product .product-attributes {
+    margin-bottom: 1em;
+}
+
+/* Button pushed to the bottom */
+.woocommerce ul.products li.product .button {
+    margin-top: auto;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Remove default WooCommerce pseudo-elements */
+.woocommerce ul.products::before, .woocommerce ul.products::after {
+    content: none !important;
+}
+
+/* --- 4. Sidebar Layouts --- */
+.shop-sidebar-left-sidebar #primary.luxury-jewels-container,
+.shop-sidebar-right-sidebar #primary.luxury-jewels-container {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.shop-container {
+    display: grid;
+    gap: 1em;
+}
+
+.shop-container .shop-content,
+.shop-container .widget-area {
+    padding-left: 1em !important;
+    padding-right: 1em !important;
+}
+
+/* Desktop Grid Layouts */
+.shop-sidebar-right-sidebar .shop-container { grid-template-columns: 1fr 300px; }
+.shop-sidebar-left-sidebar .shop-container { grid-template-columns: 300px 1fr; }
+
+/* Left Sidebar specifics */
+.shop-sidebar-left-sidebar .shop-container .shop-content { grid-column: 2 / 3; }
+.shop-sidebar-left-sidebar .shop-container #secondary {
+    padding: 0;
+    grid-column: 1 / 2;
+    grid-row: 1;
+}
+
+/* Hide Sidebar on Tablet/Mobile */
+@media (max-width: 1024px) {
+    body.shop-sidebar-left-sidebar aside#secondary.widget-area { display: none; }
+    body.shop-sidebar-left-sidebar .shop-container { grid-template-columns: 1fr; }
+    body.shop-sidebar-left-sidebar .shop-container .shop-content { grid-column: auto; }
+}
+
+/* --- 5. Filtering & Ordering --- */
+.woocommerce-ordering select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%;
+    background-size: 0.9em auto;
+    padding-right: 2.5em;
+}
+
+.woocommerce .widget_price_filter .ui-slider .ui-slider-handle {
+    background-color: var(--color-accent-dark);
+}
+
+.woocommerce .widget_price_filter .ui-slider .ui-slider-range {
+    background-color: var(--color-accent);
+}
+
+.woocommerce-result-count{
+    display: none;
+}
+
+select[name="orderby"] {
+    background-color: transparent;
+    padding: 0.5rem 1rem;
+    border: 0;
+}
+
+.woocommerce .woocommerce-ordering {
+    margin: 0;
+}
+
+.shop-content .page-title {
+    text-align: center;
+    font-size: 48px;
+    margin: 0;
+    padding: 0;
+    line-height: 42px;
+}
+
+.shop-content .term-description{
+    text-align: center;
+}
+
+.chosen a {
+    color: var(--color-text-headings);
+    background: var(--color-border);
+    padding: 4px 8px;
+}
+
+/* hide active filters */
+.woocommerce.widget_layered_nav_filters {
+    display: none;
+}

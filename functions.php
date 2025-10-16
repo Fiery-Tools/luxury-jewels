@@ -9,6 +9,7 @@
  * Load theme includes.
  */
 require get_template_directory() . '/includes/customizer.php';
+require get_template_directory() . '/includes/template-tags.php';
 require get_template_directory() . '/includes/attributes.php';
 require get_template_directory() . '/includes/enqueue.php';
 require get_template_directory() . '/includes/woocommerce-hooks.php';
@@ -67,11 +68,11 @@ function luxury_jewels_widgets_init()
 		)
 	);
 
-	// todo: footer areas
-	// register_sidebar(array('name' => esc_html__('Footer Column 1', 'luxury-jewels'), 'id' => 'footer-1'));
-	// register_sidebar(array('name' => esc_html__('Footer Column 2', 'luxury-jewels'), 'id' => 'footer-2'));
-	// register_sidebar(array('name' => esc_html__('Footer Column 3', 'luxury-jewels'), 'id' => 'footer-3'));
-	// register_sidebar(array('name' => esc_html__('Footer Column 4', 'luxury-jewels'), 'id' => 'footer-4'));
+	// Footer widget areas
+	register_sidebar(array('name' => esc_html__('Footer Column 1', 'luxury-jewels'), 'id' => 'footer-1', 'before_widget' => '<section id="%1$s" class="widget %2$s">', 'after_widget'  => '</section>', 'before_title'  => '<h2 class="widget-title">', 'after_title'   => '</h2>'));
+	register_sidebar(array('name' => esc_html__('Footer Column 2', 'luxury-jewels'), 'id' => 'footer-2', 'before_widget' => '<section id="%1$s" class="widget %2$s">', 'after_widget'  => '</section>', 'before_title'  => '<h2 class="widget-title">', 'after_title'   => '</h2>'));
+	register_sidebar(array('name' => esc_html__('Footer Column 3', 'luxury-jewels'), 'id' => 'footer-3', 'before_widget' => '<section id="%1$s" class="widget %2$s">', 'after_widget'  => '</section>', 'before_title'  => '<h2 class="widget-title">', 'after_title'   => '</h2>'));
+	register_sidebar(array('name' => esc_html__('Footer Column 4', 'luxury-jewels'), 'id' => 'footer-4', 'before_widget' => '<section id="%1$s" class="widget %2$s">', 'after_widget'  => '</section>', 'before_title'  => '<h2 class="widget-title">', 'after_title'   => '</h2>'));
 }
 add_action('widgets_init', 'luxury_jewels_widgets_init');
 
@@ -100,12 +101,35 @@ function luxury_jewels_custom_nav_menu()
 		$menu_items = wp_get_nav_menu_items($menu_id);
 
 		if ($menu_items) {
+			// A temporary array to hold top-level items, keyed by their ID
+			$user_menu_items_by_id = array();
+			$child_items = array();
+
+			// First pass: separate top-level items and child items
 			foreach ($menu_items as $item) {
-				$user_menu_items[] = array(
-					'title' => $item->title,
-					'url'   => $item->url,
-				);
+				if ($item->menu_item_parent == 0) {
+					$user_menu_items_by_id[$item->ID] = array(
+						'title'    => $item->title,
+						'url'      => $item->url,
+						'children' => array(),
+					);
+				} else {
+					$child_items[] = $item;
+				}
 			}
+
+			// Second pass: attach child items to their parents
+			foreach ($child_items as $child) {
+				if (isset($user_menu_items_by_id[$child->menu_item_parent])) {
+					$user_menu_items_by_id[$child->menu_item_parent]['children'][] = array(
+						'title' => $child->title,
+						'url'   => $child->url,
+					);
+				}
+			}
+
+			// Convert back to a simple indexed array
+			$user_menu_items = array_values($user_menu_items_by_id);
 		}
 	}
 
@@ -175,14 +199,32 @@ function luxury_jewels_custom_nav_menu()
 		}
 	}
 
-	// Combine: core items first, then extra user items
-	$all_items = array_merge($core_items, $extra_items);
+	// Combine: extra user items first, then core items
+	$all_items = array_merge($extra_items, $core_items);
 
 	// Output the menu
 	echo '<ul id="primary-menu" class="menu">';
 	foreach ($all_items as $item) {
-		$li_class = isset($item['class']) ? ' class="' . esc_attr($item['class']) . '"' : '';
-		echo '<li' . $li_class . '><a href="' . esc_url($item['url']) . '">' . $item['title'] . '</a></li>';
+		$has_children = ! empty($item['children']);
+		$li_classes   = array();
+		if (isset($item['class'])) {
+			$li_classes[] = $item['class'];
+		}
+		if ($has_children) {
+			$li_classes[] = 'menu-item-has-children';
+		}
+		$li_class_attr = $li_classes ? ' class="' . esc_attr(implode(' ', $li_classes)) . '"' : '';
+
+		echo '<li' . $li_class_attr . '><a href="' . esc_url($item['url']) . '">' . $item['title'] . '</a>';
+
+		if ($has_children) {
+			echo '<ul class="sub-menu">';
+			foreach ($item['children'] as $child) {
+				echo '<li><a href="' . esc_url($child['url']) . '">' . $child['title'] . '</a></li>';
+			}
+			echo '</ul>';
+		}
+		echo '</li>';
 	}
 	echo '</ul>';
 }
@@ -207,6 +249,9 @@ function luxury_jewels_body_classes($classes)
 			$classes[] = 'shop-sidebar-' . $sidebar_layout;
 		}
 	}
+
+  $columns = get_theme_mod( 'luxury_jewels_shop_columns', 3 );
+  $classes[] = 'shop-columns-' . absint( $columns );
 
 	return $classes;
 }
@@ -337,3 +382,4 @@ function luxury_jewels_preload_lcp_image()
 	}
 }
 add_action('wp_head', 'luxury_jewels_preload_lcp_image', 1);
+

@@ -38,9 +38,14 @@ if ( post_password_required() ) {
         /**
          * Hook: woocommerce_single_product_summary.
          */
+        woocommerce_template_single_meta(); // Display meta (SKU, categories) first.
         do_action( 'woocommerce_single_product_summary' );
+        luxury_jewels_render_custom_accordion();
         ?>
+
+
     </div>
+
 
 	<?php
 	/**

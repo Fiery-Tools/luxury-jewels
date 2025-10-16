@@ -1,0 +1,382 @@
+/*--------------------------------------------------------------
+# 5. WooCommerce Single Product Overrides
+--------------------------------------------------------------*/
+
+/* Remove old WooCommerce floats/widths */
+.woocommerce div.product .woocommerce-product-gallery,
+.woocommerce div.product .summary {
+    width: auto !important;
+    float: none !important;
+    margin: 0 !important;
+}
+
+/* --- 1. Main Product Layout --- */
+.single-product div.product {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    max-width: 1440px;
+    margin: auto;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+    .single-product div.product {
+        grid-template-columns: 1fr; /* Change from two columns to one */
+    }
+    .hide-on-mobile {
+        display: none !important;
+    }
+}
+
+.product-top {
+    margin-bottom: -2rem;
+}
+
+/* --- 2. Product Gallery --- */
+.product-gallery-column .woocommerce-product-gallery {
+    opacity: 1 !important;
+}
+
+.woocommerce-product-gallery {
+    position: relative;
+}
+
+.lj-gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 1em;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.lj-gallery-nav.lj-prev { left: 0; }
+.lj-gallery-nav.lj-next { right: 0; }
+
+[data-thumb]:not(:first-child) {
+  /* opacity: 0 !important; */
+}
+
+.woocommerce-product-gallery__wrapper{
+    overflow: hidden;
+}
+
+/* --- 3. Product Information (Right Column) --- */
+.summary.entry-summary {
+    text-align: center;
+}
+
+.product-info-column {
+    font-family: sans-serif;
+}
+
+/* Product Title */
+h1.product_title {
+    font-family: var(--font-headings);
+    font-size: 2.5rem;
+    font-weight: 200;
+    line-height: 1.1;
+    margin: 0 0 15px;
+    letter-spacing: -2px !important;
+}
+
+/* Price */
+.summary p.price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    margin: 0;
+}
+
+.summary p.price .woocommerce-Price-amount.amount, .price {
+    color: var(--color-accent) !important;
+}
+
+/* "Buy Now, Pay Later" */
+.summary .buy-now-pay-later {
+    font-size: 0.9rem;
+    color: var(--color-text-subtle);
+    margin-bottom: 2.5rem;
+}
+
+.summary .buy-now-pay-later a {
+    color: var(--color-text-subtle);
+    text-decoration: underline;
+}
+
+/* --- 4. Variations & Add to Cart Form --- */
+.summary form.cart {
+    margin: 0 auto;
+    max-width: 350px;
+    width: 100%;
+}
+
+.variations {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.variations label {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.variations select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    background-color: #fff;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%208l5%205%205-5z%22%20fill%3D%22%23333%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%;
+    background-size: 1.25em;
+}
+
+.quantity {
+    display: none !important;
+}
+
+.single_add_to_cart_button {
+    width: 100% !important;
+    background-color: #888888 !important;
+    color: var(--color-background) !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 1rem 2rem !important;
+    border: none !important;
+    border-radius: 0 !important;
+    transition: background-color 0.3s;
+}
+
+.single_add_to_cart_button:hover {
+    background-color: var(--color-secondary) !important;
+}
+
+.woocommerce-variation.single_variation {
+    display: none !important;
+}
+
+.shop-content .variation-row:not(:nth-child(1)){
+    padding-top: 1rem;
+}
+
+.selected-variation-name {
+    padding-left: 0.5rem;
+}
+
+/* --- 5. Custom Swatches --- */
+.hidden-select { display: none !important; }
+
+.variation-row .swatches, .variation-row .buttons {
+    display: flex !important;
+    gap: 5px;
+}
+
+.button-attribute {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    margin: 0 5px 5px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    color: #2C3E50;
+    background-color: #ffffff;
+    white-space: nowrap;
+    transition: border 0.2s ease-in-out;
+}
+
+.button-attribute.sm {
+    padding: 6px 12px;
+    margin: 0 3px 3px;
+    border-radius: 2px;
+    font-size: 14px;
+}
+
+.button-attribute.selected {
+    border: 2px solid #2C3E50;
+}
+
+.swatch-attribute {
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-block;
+    margin: 5px;
+    border: 1px solid #cccccc;
+    padding: 2px;
+    background-clip: content-box;
+    transition: all 0.3s ease;
+}
+
+.swatch-attribute.selected {
+    padding: 0;
+    border: 3px solid #000000;
+}
+
+.swatch-attribute:hover {
+    opacity: 0.8;
+}
+
+.label {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.label label {
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 3px 0 0 0;
+}
+
+.selected-variation-name {
+    font-weight: 400;
+}
+
+/* --- 6. Product Meta (SKU, CATEGORIES) --- */
+.product_meta {
+    display: flex;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    /* margin-top: 2rem; */
+    margin-bottom: 15px;
+}
+
+.sku_wrapper { text-align: left; flex-grow: 1; }
+.posted-in { text-align: right; }
+
+/* Hide the "SKU:" text label and only show value */
+.sku_wrapper, .posted_in { font-size: 0; }
+.sku_wrapper .sku, .posted_in a { font-size: x-small !important; }
+
+.product_meta a {
+    color: var(--color-accent-dark);
+    font-weight: 700;
+}
+
+.tagged_as {
+    display: none !important;
+}
+
+/* --- 7. Custom Product Tabs/Accordion --- */
+.woocommerce-tabs { display: none } /* Hide default WC tabs */
+
+.luxury-jewels-tabs {
+    margin-top: 35px;
+    clear: both;
+    border-top: 1px solid #e0e0e0;
+}
+
+.lj-accordion-item {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.lj-accordion-title {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    color: #2C3E50;
+    padding: 10px 0;
+    margin: 0 !important;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1;
+}
+
+.lj-accordion-title::after {
+    content: '+';
+    font-size: 24px;
+    font-weight: 300;
+    color: #2C3E50;
+    transition: transform 0.2s ease-in-out;
+}
+
+.lj-accordion-item.is-active .lj-accordion-title::after {
+    transform: rotate(45deg);
+}
+
+.lj-accordion-content {
+    display: none;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    padding: 0 0 25px 0;
+}
+
+/* --- 8. Product Navigation --- */
+.product-navigation {
+    display: flex;
+    gap: 10px;
+    font-size: small;
+    float: right;
+}
+
+.product-navigation a {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.product-navigation .icon svg {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+}
+
+/* --- 9. Payment Icons --- */
+.payment-icons-wrapper {
+    padding: 16px 20px;
+    text-align: center;
+}
+
+.payment-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.payment-icon {
+    height: 24px !important;
+    width: auto;
+    max-width: 50px;
+    object-fit: contain;
+    transition: opacity 0.2s ease;
+}
+
+.payment-icon:hover {
+    opacity: 0.7;
+}
+
+@media (max-width: 640px) {
+    .payment-icons { gap: 8px; }
+    .payment-icon { height: 20px; max-width: 40px; }
+}

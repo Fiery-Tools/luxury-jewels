@@ -1,0 +1,128 @@
+/*--------------------------------------------------------------
+# 6. Homepage Specifics
+--------------------------------------------------------------*/
+.hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    background-color: var(--color-secondary);
+    background-image: url('assets/images/hero-background.jpg');
+    background-size: cover;
+    background-position: center;
+    min-height: 80vh;
+    padding: 5vh 0;
+    position: relative;
+    margin-bottom: 4em;
+    border: 1px solid var(--color-border);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.7) 0%, rgba(44, 44, 44, 0.5) 100%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 2em;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 400;
+    color: var(--color-accent);
+    margin: 0 0 0.6em 0;
+    line-height: 1.1;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin: 0 auto 3em auto;
+    max-width: 450px;
+    color: var(--color-accent-light);
+}
+
+.hero-button {
+    background-color: transparent;
+    border: 2px solid var(--color-accent);
+    font-size: 13px;
+    letter-spacing: 3.5px;
+    box-shadow: none;
+}
+
+.hero-button:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: none;
+}
+
+.featured-collections {
+    text-align: center;
+    margin-bottom: 4em;
+}
+
+.section-title {
+    font-size: 36px;
+    margin-bottom: 1.5em;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, var(--color-accent), var(--color-accent-dark));
+}
+
+.collections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2.5em;
+}
+
+.collection-item {
+    padding: 1.5em;
+    text-align: center;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+}
+
+.collection-item:hover {
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.15);
+    border-color: var(--color-accent-light);
+    transform: translateY(-5px);
+}
+
+.collection-item img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.collection-item:hover img {
+    transform: scale(1.05);
+}
+
+.collection-item h3 {
+    font-size: 24px;
+    margin: 1em 0 0 0;
+    transition: color 0.3s ease-in-out;
+}
+
+.collection-item:hover h3 {
+    color: var(--color-accent-dark);
+}
